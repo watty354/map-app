@@ -5,7 +5,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { ImagePickerComponent } from '../lib/image-picker';
-import * as ImagePicker from 'expo-image-picker';
+import * as pickImage from 'expo-image-picker';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCx7y1t6Co3BkXsgvZp6ZemiaZPspdhdXk",
@@ -19,13 +19,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-//const db = getFirestore(app);
-//export const auth = getAuth(app);
+
 
 export const HomeScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
-                <ImagePickerComponent />
             <Text>Open on your app!</Text>
             <Button
                 title="新規作成"
