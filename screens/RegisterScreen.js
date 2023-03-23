@@ -4,11 +4,14 @@ import firebase from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, collection, addDoc} from "firebase/firestore";
 import  { db } from '../lib/firebase'
+import { UserContext } from '../contexts/userContexts'
 
 
 export const RegisterScreen = ( { navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // const {setUser} = userContext(UserContext)
 
   //登録
   const handleRegister =() => {
@@ -28,6 +31,7 @@ export const RegisterScreen = ( { navigation }) => {
         })
         .then((docRef) => {
           console.log('Register Success:', user);
+          // setUser(user);
           navigation.navigate('Profile');
         })
         .catch((error) => {
