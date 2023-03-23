@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Image } from 'react-native';
+import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { query, collection, doc, updateDoc, where, getDocs } from "firebase/firestore";
@@ -16,6 +16,9 @@ export const ProfileScreen = () => {
   const [photoUrl, setPhotoUrl] = useState(null);
 
   const handleSaveProfile = async () => {
+    //ストレージに保存処理
+    const profileImage = await handleUploadPhoto(photoUrl);
+
     // プロフィールを保存する処理
     const userId = auth.currentUser.uid;
     console.log(userId);
@@ -30,10 +33,10 @@ export const ProfileScreen = () => {
     });
     const washingtonRef = doc(db, "users", currentId);
     await updateDoc(washingtonRef, {
-      displayname: true,
-      imageUrl: photoUrl
+      displayname: name,
+      imageUrl: profileImage
+      
     });
-    const profileImage = await handleUploadPhoto(photoUrl);
 
   };
 
@@ -44,24 +47,60 @@ export const ProfileScreen = () => {
   };
 
   return (
-    <View >
-      <TextInput
-        placeholder="Name"
-        value={name}
-        onChangeText={(value) => setName(value)}
-        style={{ marginVertical: 10, width: '80%', padding: 10, borderWidth: 1, borderRadius: 5 }}
-      />
-      {photoUrl && (
-        <Image
-          source={{ uri: photoUrl }}
-          style={{ width: 200, height: 200, marginVertical: 10 }}
+    <View style={styles.container}>
+      <TouchableOpacity onPress={onPickImage}>
+        {photoUrl ? (
+          <Image source={{ uri: photoUrl }} style={styles.avatar} />
+          ) : (
+            <View style={styles.avatarPlaceholder}>
+            <Text style={styles.avatarPlaceholderText}>写真を選択</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+        <TextInput
+          placeholder="表示される名前"
+          value={name}
+          onChangeText={(value) => setName(value)}
+          style={{ marginVertical: 10, width: '80%', padding: 10, borderWidth: 1, borderRadius: 5 }}
         />
-      )}
-
-      <Button title="Choose Photo" onPress={onPickImage} />
       <Button title="Save Profile" onPress={handleSaveProfile} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  avatarPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#E1E2E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarPlaceholderText: {
+    color: '#ABB1B7',
+    fontSize: 16,
+  },
+  name: {
+    marginTop: 24,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  email: {
+    marginTop: 8,
+    fontSize: 16,
+    color: '#AEB5BC',
+  },
+});
 
 

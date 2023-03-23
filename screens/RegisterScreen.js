@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import firebase from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, collection, addDoc} from "firebase/firestore";
+import { doc, setDoc, collection, addDoc, Timestamp} from "firebase/firestore";
 import  { db } from '../lib/firebase'
 import { UserContext } from '../contexts/userContexts'
 
@@ -16,7 +16,6 @@ export const RegisterScreen = ( { navigation }) => {
   //登録
   const handleRegister =() => {
     const auth = getAuth();
-    console.log(auth);
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in
@@ -27,7 +26,9 @@ export const RegisterScreen = ( { navigation }) => {
           name: "",
           country: "",
           email: email,
-          passord: password
+          passord: password,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
         })
         .then((docRef) => {
           console.log('Register Success:', user);
