@@ -31,9 +31,11 @@ export const ProfileScreen = () => {
     });
     const washingtonRef = doc(db, "users", currentId);
     await updateDoc(washingtonRef, {
-      displayname: name,
-      imageUrl: profileImage
-      
+      displayName: name,
+      imageUrl: profileImage,
+      displayMap: false,
+      latitude: 34.665442,
+      longitude: 135.516912
     });
 
   };

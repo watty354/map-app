@@ -1,10 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Button, Image } from 'react-native';
+import { StyleSheet, View, Button, Image, TouchableOpacity, Text } from 'react-native';
 import * as Location from 'expo-location';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db, auth, handleUploadPhoto } from '../lib/firebase'
 
 export const MapScreen = () => {
   //const { user } = route.params;
+  const [usersData, setUsersData] = useState([]);
+
+  useEffect(() => {
+    const fetchUsersData = async () => {
+      const data = await getUsersData();
+      setUsersData(data);
+    };
+    fetchUsersData();
+  }, []);
+
 
   const [mapRegion, setMapRegion] = useState({
     // 初期表示
@@ -17,7 +29,7 @@ export const MapScreen = () => {
   const [markerVisible, setMarkerVisible] = useState(false);
   const markerTimer = useRef(null);
 
-
+  //現在地の表示
   const userLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -48,7 +60,18 @@ export const MapScreen = () => {
       }, 5000);
     }
   }
-const photo = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/profileImage%2F1679611710480.jpg?alt=media&token=44b46c82-d18c-414b-8b5e-8f0d8ec2ebdd"
+  const getUsersData = async () => {
+    const q = query(collection(db, 'users'), where('displayMap', '==', true));
+    const querySnapshot = await getDocs(q);
+    const usersData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    console.log(usersData);
+    return usersData;
+  };
+
+  const photo = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/profileImage%2F1679611710480.jpg?alt=media&token=44b46c82-d18c-414b-8b5e-8f0d8ec2ebdd"
 
   return (
     <View style={styles.container}>
@@ -82,9 +105,32 @@ const photo = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.co
               image={{ uri: "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/profileImage%2F1679611710480.jpg?alt=media&token=44b46c82-d18c-414b-8b5e-8f0d8ec2ebdd" }}
               />
           )} */}
+
+
+        {usersData.map((user) => (
+          <Marker
+            key={user.id}
+            coordinate={{
+              latitude: user.latitude,
+              longitude: user.longitude,
+            }}
+            // title={user.displayname}
+            description={user.displayname}
+          >
+            <Image
+              source={{ uri: user.imageUrl }}
+              style={styles.markerImage}
+            />
+          </Marker>
+        ))}
       </MapView>
       <View style={styles.buttonContainer}>
-        <Button title='Get' onPress={handlePress} />
+        {/* <Button title='Get' onPress={handlePress} /> */}
+        <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>ここおるで〜</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -111,5 +157,21 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 2,
     borderColor: 'red',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 16,
+    alignSelf: 'center',
+  },
+  button: {
+    backgroundColor: '#ff69b4',
+    padding: 16,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
