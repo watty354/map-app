@@ -19,10 +19,8 @@ export const ProfileScreen = () => {
     //ストレージに保存処理
     const profileImage = await handleUploadPhoto(photoUrl);
 
-    // プロフィールを保存する処理
+    // プロフィールを保存(更新)する処理
     const userId = auth.currentUser.uid;
-    console.log(userId);
-
     const q = query(collection(db, "users"), where("user_id", "==", userId));
     const querySnapshot = await getDocs(q);
 
