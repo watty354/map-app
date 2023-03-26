@@ -2,22 +2,61 @@ import React, { useEffect, useState, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { StyleSheet, View, Button, Image, TouchableOpacity, Text } from 'react-native';
 import * as Location from 'expo-location';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db, auth, handleUploadPhoto } from '../lib/firebase'
+import { collection, query, where, getDocs , onSnapshot} from 'firebase/firestore';
+import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay ,mapDisplayNone } from '../lib/firebase'
+import { userLocation } from '../lib/location';
+import { LoginPrompt } from '../components/LoginPrompt'
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-export const MapScreen = () => {
+export const MapScreen = ({ route, navigation }) => {
+  // const { article } = route.params;
   //const { user } = route.params;
+
   const [usersData, setUsersData] = useState([]);
+  const [loginUsersData, setLoginUsersData] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  //共有してるユーザを取得
+  useEffect(() => {
     const fetchUsersData = async () => {
-      const data = await getUsersData();
+      const data = await getMapUsersData();
       setUsersData(data);
     };
     fetchUsersData();
   }, []);
 
+  //ログインしてるユーザを取得
+  useEffect(() => {
+    fetchLoginUsersData();
+  }, []);
+  
+  const fetchLoginUsersData = async () => {
+    const data = await getLoginUsersData();
+    setLoginUsersData(data);
+  };
+  //リアルタイムDB取得のおまじない
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      query(collection(db, 'users'), where('displayMap', '==', true)),
+      (querySnapshot) => {
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setUsersData(data);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
+  //マップ初期表示
   const [mapRegion, setMapRegion] = useState({
     // 初期表示
     latitude: 34.665442,
@@ -30,7 +69,8 @@ export const MapScreen = () => {
   const markerTimer = useRef(null);
 
   //現在地の表示
-  const userLocation = async () => {
+  const userLocationNow = async () => {
+    // let location = userLocation();
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       setErrorMsg('Permission to access location was denied');
@@ -42,96 +82,86 @@ export const MapScreen = () => {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     })
-    console.log(location.coords.latitude, location.coords.longitude);
   }
-
   useEffect(() => {
-    userLocation();
+    userLocationNow();
   }, []);
 
+  //共有ボタン押下アクション
   const handlePress = () => {
+    fetchLoginUsersData();
     if (!markerVisible) {
       setMarkerVisible(true);
+      mapDisplay(mapRegion.latitude, mapRegion.longitude);
       if (markerTimer.current) {
         clearTimeout(markerTimer.current);
       }
       markerTimer.current = setTimeout(() => {
         setMarkerVisible(false);
-      }, 5000);
+        mapDisplayNone();
+      }, 10000);
     }
   }
-  const getUsersData = async () => {
-    const q = query(collection(db, 'users'), where('displayMap', '==', true));
-    const querySnapshot = await getDocs(q);
-    const usersData = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    console.log(usersData);
-    return usersData;
+  // const name = loginUsersData[0].displayName;
+  // const photo = loginUsersData[0].imageUrl;
+
+  const handleLoginPress = () => {
+    navigation.navigate('Login');
   };
 
-  const photo = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/profileImage%2F1679611710480.jpg?alt=media&token=44b46c82-d18c-414b-8b5e-8f0d8ec2ebdd"
-
+  
   return (
     <View style={styles.container}>
-      <MapView style={styles.map}
-        region={mapRegion}
-        provider={PROVIDER_GOOGLE}
-      >
-        {markerVisible && (
+      {isAuthenticated ? (
+      <><MapView style={styles.map}
+          region={mapRegion}
+          provider={PROVIDER_GOOGLE}
+        >
+          {markerVisible && (
 
-          <Marker
-            coordinate={{
-              latitude: mapRegion.latitude,
-              longitude: mapRegion.longitude,
-            }}
-            title="光貴"
-          >
-            <Image
-              source={{ uri: photo }}
-              style={styles.markerImage}
-            />
-          </Marker>
-        )}
-        {/* {markerVisible && (
             <Marker
               coordinate={{
                 latitude: mapRegion.latitude,
                 longitude: mapRegion.longitude,
               }}
-              title="現在位置"
-              description="You are here!"
-              image={{ uri: "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/profileImage%2F1679611710480.jpg?alt=media&token=44b46c82-d18c-414b-8b5e-8f0d8ec2ebdd" }}
-              />
-          )} */}
-
-
-        {usersData.map((user) => (
-          <Marker
-            key={user.id}
-            coordinate={{
-              latitude: user.latitude,
-              longitude: user.longitude,
-            }}
-            // title={user.displayname}
-            description={user.displayname}
-          >
-            <Image
-              source={{ uri: user.imageUrl }}
-              style={styles.markerImage}
-            />
-          </Marker>
-        ))}
-      </MapView>
-      <View style={styles.buttonContainer}>
-        {/* <Button title='Get' onPress={handlePress} /> */}
-        <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>ここおるで〜</Text>
-          </View>
-        </TouchableOpacity>
+              title={loginUsersData[0].displayName}
+            >
+              <Image
+                source={{ uri: loginUsersData[0].imageUrl }}
+                style={styles.markerImage} />
+            </Marker>
+          )}
+          {usersData.map((user) => (
+            <Marker
+              key={user.id}
+              coordinate={{
+                latitude: user.latitude,
+                longitude: user.longitude,
+              }}
+              // title={user.displayname}
+              description={user.displayname}
+            >
+              <Image
+                source={{ uri: user.imageUrl }}
+                style={styles.markerImage} />
+            </Marker>
+          ))}
+        </MapView><View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText}>ここおるで〜</Text>
+              </View>
+            </TouchableOpacity>
+          </View></>
+      ) : (
+        <View>
+        <LoginPrompt onPress={handleLoginPress} />
       </View>
+    //     <Button
+    //     title="ログイン"
+    //     onPress={() => navigation.navigate('Login')}
+    // />
+      )}
     </View>
   );
 }
@@ -164,7 +194,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   button: {
-    backgroundColor: '#ff69b4',
+    backgroundColor: '#EB6383',
     padding: 16,
     borderRadius: 8,
   },

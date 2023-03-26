@@ -24,12 +24,23 @@ const UserStack = () => {
   );
 }
 
+const MapStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Map" component={MapScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="HomeTab" component={UserStack} options={{ headerShown: false }} />
-        <Tab.Screen name="MapTab" component={MapScreen} options={{ headerShown: false }}/>
+        <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false }}/>
       </Tab.Navigator>
     </NavigationContainer>
   );

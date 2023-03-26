@@ -23,7 +23,6 @@ export const RegisterScreen = ( { navigation }) => {
         console.log(user);
         const docRef = addDoc(collection(db, "users"), {
           user_id: user.uid,
-          name: "",
           country: "",
           email: email,
           passord: password,

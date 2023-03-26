@@ -2,16 +2,13 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { query, collection, doc, updateDoc, where, getDocs } from "firebase/firestore";
+import { query, collection, doc, updateDoc, where, getDocs, Timestamp } from "firebase/firestore";
 import { db, auth, handleUploadPhoto } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getExtention } from "../lib/file";
 
-// const storage = getStorage();
-// const storageRef = ref(storage, 'スクリーンショット 2023-03-03 20.08.14.png');
-
-export const ProfileScreen = () => {
+export const ProfileScreen = ({navigation}) => {
   const [name, setName] = useState('');
   const [photoUrl, setPhotoUrl] = useState(null);
 
@@ -35,9 +32,11 @@ export const ProfileScreen = () => {
       imageUrl: profileImage,
       displayMap: false,
       latitude: 34.665442,
-      longitude: 135.516912
+      longitude: 135.516912,
+      updatedAt: Timestamp.now(),
     });
 
+    navigation.navigate('MapTab');
   };
 
   //
