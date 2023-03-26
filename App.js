@@ -6,7 +6,10 @@ import { HomeScreen } from './screens/HomeScreen';
 import { RegisterScreen } from './screens/RegisterScreen'
 import { LoginScreen } from './screens/LoginScreen'
 import { ProfileScreen } from './screens/ProfileScreen'
+import { AccuntScreen } from './screens/AccuntScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { db, auth, handleUploadPhoto } from './lib/firebase'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,21 +30,42 @@ const UserStack = () => {
 const MapStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Map" component={MapScreen} />
+      <Stack.Screen name="Map" component={MapScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }
+const AccuntStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Accunt" component={AccuntScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Map" component={MapScreen} />
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
+  const [user, loading] = useAuthState(auth);
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="HomeTab" component={UserStack} options={{ headerShown: false }} />
-        <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false }}/>
-      </Tab.Navigator>
+      {user ? (
+        <Tab.Navigator>
+          <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false }}/>
+          <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false }}/>
+        </Tab.Navigator>
+      ) : (
+        <Tab.Navigator>
+          <Tab.Screen name="HomeTab" component={UserStack} options={{ headerShown: false }} />
+          <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false }}/>
+        </Tab.Navigator>
+      )}
     </NavigationContainer>
   );
 }

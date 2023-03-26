@@ -13,32 +13,42 @@ export const LoginScreen = ({navigation}) => {
   const handleLogin =() => {
     
     const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+            // ログイン情報の維持設定
+            setPersistence(auth, browserSessionPersistence)
+            .then(() => {
 
-        // Signed in
-        console.log('User signed in!');
-        navigation.navigate('Map');
-        // const user = userCredential.user;
-        // console.log(user);
-        // const docRef = addDoc(collection(db, "users"), {
-        //   name: "Tokyo",
-        //   country: "Japan",
-        //   useId: user.uid
-        // })
-        // .then((docRef) => {
-        //   console.log("Document written with ID: ", docRef.id);
-        //   navigation.navigate('Map');
-        // })
-        // .catch((error) => {
-        //   console.error("Error adding document: ", error);
-        // });
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode);
-      });
+
+              
+              signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+          
+                  // Signed in
+                  console.log('User signed in!');
+                  navigation.navigate('MapTab');
+                  // const user = userCredential.user;
+                  // console.log(user);
+                  // const docRef = addDoc(collection(db, "users"), {
+                  //   name: "Tokyo",
+                  //   country: "Japan",
+                  //   useId: user.uid
+                  // })
+                  // .then((docRef) => {
+                  //   console.log("Document written with ID: ", docRef.id);
+                  //   navigation.navigate('Map');
+                  // })
+                  // .catch((error) => {
+                  //   console.error("Error adding document: ", error);
+                  // });
+                })
+                .catch((error) => {
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+                  console.log(errorCode);
+                });
+            })
+            .catch((error) => {
+                console.log(`ログイン情報の維持設定エラー: ${error}`);
+            });
   }
 
 
