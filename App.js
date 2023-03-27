@@ -9,6 +9,7 @@ import { ProfileScreen } from './screens/ProfileScreen'
 import { AccuntScreen } from './screens/AccuntScreen'
 import { FollowListScreen } from './screens/FollowListScreen'
 import { UserScreen } from './screens/UserScreen'
+import { ChatScreen } from './screens/ChatScreen' 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { db, auth, handleUploadPhoto } from './lib/firebase'
@@ -63,8 +64,7 @@ const AccuntStack = () => {
       <Stack.Screen name="Map" component={MapScreen} />
       <Stack.Screen name="FollowList" component={FollowListScreen} />
       <Stack.Screen name="User" component={UserScreen} />
-      {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
-
+      <Stack.Screen name="Chat" component={ChatScreen} />
     </Stack.Navigator>
   );
 }

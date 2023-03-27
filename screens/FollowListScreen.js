@@ -13,7 +13,7 @@ export const FollowListScreen = ({navigation}) => {
   //初期化時:共有してるユーザを取得
   useEffect(() => {
     const fetchUsersData = async () => {
-      const data = await getFollowedData();
+      const data = await getMapUsersData();
       setUsersData(data);
       if (data) {
         setIsRequest(true)
@@ -30,7 +30,7 @@ export const FollowListScreen = ({navigation}) => {
           <ListItem
             imageUrl={item.imageUrl}
             displayName={item.displayName}
-            onPress={() => navigation.navigate('User', { user: item})}
+            onPress={() => navigation.navigate('Chat', { user: item})}
           />
         )}
         keyExtractor={(item, index) => index.toString()}
