@@ -26,14 +26,14 @@ export const AccuntScreen = ({ navigation }) => {
 
     // フォロー申請画面に遷移するハンドラー
     const handleFollowRequest = () => {
-        setIsFollowRequested(true);
+        navigation.navigate('FollowList');
     };
 
     // ログインしていない場合はログインページにリダイレクト
     if (!loginUsersData) {
         navigation.navigate('Home');
     }
-
+    
     return (
         <View style={styles.container}>
             <TouchableOpacity>
@@ -56,7 +56,7 @@ export const AccuntScreen = ({ navigation }) => {
                 <Text style={styles.loginButtonText}>ID検索</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.followButton}>
+            <TouchableOpacity style={styles.followButton} onPress={handleFollowRequest} >
                 <Text style={styles.loginButtonText}>フォロー申請一覧</Text>
             </TouchableOpacity>
         </View>

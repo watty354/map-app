@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Button, Image, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, Button, Image, TouchableOpacity, Text , AppState} from 'react-native';
 import * as Location from 'expo-location';
 import { collection, query, where, getDocs , onSnapshot} from 'firebase/firestore';
 import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay ,mapDisplayNone } from '../lib/firebase'
@@ -34,13 +34,13 @@ export const MapScreen = ({ route, navigation }) => {
 
   //ログインしてるユーザを取得
   useEffect(() => {
+    const fetchLoginUsersData = async () => {
+      const data = await getLoginUsersData();
+      setLoginUsersData(data);
+    };
     fetchLoginUsersData();
   }, []);
   
-  const fetchLoginUsersData = async () => {
-    const data = await getLoginUsersData();
-    setLoginUsersData(data);
-  };
   //リアルタイムDB取得のおまじない
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -89,7 +89,7 @@ export const MapScreen = ({ route, navigation }) => {
 
   //共有ボタン押下アクション
   const handlePress = () => {
-    fetchLoginUsersData();
+    // fetchLoginUsersData();
     if (!markerVisible) {
       setMarkerVisible(true);
       mapDisplay(mapRegion.latitude, mapRegion.longitude);
@@ -102,8 +102,20 @@ export const MapScreen = ({ route, navigation }) => {
       }, 10000);
     }
   }
-  // const name = loginUsersData[0].displayName;
-  // const photo = loginUsersData[0].imageUrl;
+  // アプリの状態を監視
+const handleAppStateChange = (nextAppState) => {
+  if (nextAppState === 'active') {
+    // アプリがフォアグラウンドに移行したときの処理
+    mapDisplayNone();
+  } else if (nextAppState === 'background') {
+    // アプリがバックグラウンドに移行したときの処理
+    mapDisplayNone();
+  }
+}
+
+// AppStateのリスナーを登録
+// const timerId = startTimer(); // 最初にタイマーをスタート
+AppState.addEventListener('change', handleAppStateChange);
 
   const handleLoginPress = () => {
     navigation.navigate('Login');

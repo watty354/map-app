@@ -14,29 +14,24 @@ export const RegisterScreen = ( { navigation }) => {
   // const {setUser} = userContext(UserContext)
 
   //登録
-  const handleRegister =() => {
+  const handleRegister = () => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then((userCredential)=> {
       // Signed in
-        const user = userCredential.user;
-        console.log(user);
-        const docRef = addDoc(collection(db, "users"), {
-          user_id: user.uid,
+        const uid = userCredential.user.uid;
+        data = {
+          user_id: uid,
           country: "",
           email: email,
           passord: password,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
+        }
+        setDoc(doc(db, "users", uid), data);
+        navigation.navigate('Profile');
+        const docRef = addDoc(collection(db, "users"), {
         })
-        .then((docRef) => {
-          console.log('Register Success:', user);
-          // setUser(user);
-          navigation.navigate('Profile');
-        })
-        .catch((error) => {
-          console.error("Error adding document: ", error);
-        });
       })
       .catch((error) => {
         const errorCode = error.code;
