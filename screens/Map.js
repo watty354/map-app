@@ -138,9 +138,15 @@ AppState.addEventListener('change', handleAppStateChange);
               }}
               title={loginUsersData[0].displayName}
             >
-              <Image
-                source={{ uri: loginUsersData[0].imageUrl }}
+              {loginUsersData[0]?.imageUrl ? (
+                <Image
+                  source={{ uri: loginUsersData[0].imageUrl }}
+                  style={styles.markerImage} />
+              ):(
+                <Image
+                source={require('../image/NoneImage.png')}
                 style={styles.markerImage} />
+              )}
             </Marker>
           )}
           {usersData.map((user) => (
@@ -169,10 +175,6 @@ AppState.addEventListener('change', handleAppStateChange);
         <View>
         <LoginPrompt onPress={handleLoginPress} />
       </View>
-    //     <Button
-    //     title="ログイン"
-    //     onPress={() => navigation.navigate('Login')}
-    // />
       )}
     </View>
   );

@@ -2,18 +2,22 @@ import { useState, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, FlatList, SafeAreaView, ScrollView} from 'react-native';
 import { ListItem } from "../components/ListItem";
-import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay ,mapDisplayNone } from '../lib/firebase'
+import { db, getLoginUsersData, getMapUsersData, auth, getFollowedData } from '../lib/firebase'
 
 
 export const FollowListScreen = ({navigation}) => {
   // console.log(Constants.manifest.extra.newsApiKey);
   const [usersData, setUsersData] = useState([]);
+  const [isRequest, setIsRequest] = useState([false]);
 
   //初期化時:共有してるユーザを取得
   useEffect(() => {
     const fetchUsersData = async () => {
-      const data = await getMapUsersData();
+      const data = await getFollowedData();
       setUsersData(data);
+      if (data) {
+        setIsRequest(true)
+      }
     };
     fetchUsersData();
   }, []);

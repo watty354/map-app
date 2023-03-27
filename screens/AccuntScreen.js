@@ -3,7 +3,7 @@ import { onAuthStateChanged, setPersistence, browserSessionPersistence } from 'f
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay, mapDisplayNone } from '../lib/firebase'
-
+import { pickImage } from '../lib/image-picker'
 
 export const AccuntScreen = ({ navigation }) => {
     const [userId, setUserId] = useState('');
@@ -33,10 +33,15 @@ export const AccuntScreen = ({ navigation }) => {
     if (!loginUsersData) {
         navigation.navigate('Home');
     }
+
+    const onPickImage = async () => {
+        const uri = await pickImage();
+        setPhotoUrl(uri);
+      };
     
     return (
         <View style={styles.container}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onPickImage}>
                 {loginUsersData[0]?.imageUrl ? (
                     <Image source={{ uri: loginUsersData[0].imageUrl }} style={styles.avatar} />
                 ) : (
@@ -45,8 +50,9 @@ export const AccuntScreen = ({ navigation }) => {
                     </View>
                 )}
             </TouchableOpacity>
-            <Text>{loginUsersData[0]?.displayName}</Text>
-            <Text>{loginUsersData[0]?.user_id}</Text>
+            <Text style={styles.name}>{loginUsersData[0]?.displayName}</Text>
+
+
             <TextInput
                 value={userId}
                 onChangeText={(value) => setName(value)}

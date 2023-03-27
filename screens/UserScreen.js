@@ -1,33 +1,36 @@
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
-import { db, auth } from '../lib/firebase'
-import { doc, setDoc, collection, addDoc, Timestamp} from "firebase/firestore";
+import { db, auth, getFolloweredUsersData } from '../lib/firebase'
+import { doc, setDoc, collection, addDoc, Timestamp, arrayUnion } from "firebase/firestore";
+import React, { useEffect, useState, useRef } from 'react';
+import { async } from '@firebase/util';
 
 export const UserScreen = ({ route }) => {
     const { user } = route.params;
+    const [isFollowed, setIsFollowed] = useState(false);
 
-    // フォロー申請画面に遷移するハンドラー
-    const handleFollow = async() => {
+    //フォローの確認
+    useEffect(() => {
+        const isFollowedConfirmation = async(user_id) => {
+            const followedIds =  await getFolloweredUsersData();
+            if (followedIds.includes(user_id)) {
+                setIsFollowed(true);
+            }
+        }
+        isFollowedConfirmation(user.user_id);
+    }, []);
+
+    // フォロー申請処理
+    const handleFollow = async () => {
         const uid = auth.currentUser.uid;
         //フォローTBL登録
         const data = {
             follower_id: uid,
-            followed_id: user.user_id,
+            followed_id: arrayUnion(user.user_id),
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         }
         await setDoc(doc(db, "follow", uid), data);
-        // const docRef = addDoc(collection(db, "follow"), {
-        //     follower_id: uid,
-        //     followed_id: user.user_id,
-        //     createdAt: Timestamp.now(),
-        //     updatedAt: Timestamp.now(),
-        // })
-        // .then((docRef) => {
-        //     console.log('Register Success:');
-        // })
-        // .catch((error) => {
-        //     console.error("Error adding document: ");
-        // });
+        setIsFollowed(true)
     };
 
     return (
@@ -37,9 +40,17 @@ export const UserScreen = ({ route }) => {
             </TouchableOpacity>
             <Text style={styles.name}>{user.displayName}</Text>
 
-            <TouchableOpacity style={styles.followButton} onPress={handleFollow} >
-                <Text style={styles.loginButtonText}>フォローする</Text>
-            </TouchableOpacity>
+            {isFollowed ? (
+                <TouchableOpacity style={styles.followedButton} >
+                    <Text style={styles.ButtonText}>フォローしてるで</Text>
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity style={styles.followButton} onPress={handleFollow} >
+                    <Text style={styles.followButtonText}>フォローする</Text>
+                </TouchableOpacity>
+
+            )}
+
         </View>
     );
 }
@@ -60,12 +71,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
-    email: {
-        marginTop: 8,
-        fontSize: 16,
-        color: '#AEB5BC',
-    },
-    loginButton: {
+    followButtonText: {
         marginBottom: 5,
         backgroundColor: '#EB6383',
         paddingVertical: 10,
@@ -82,12 +88,12 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
-    loginButtonText: {
+    ButtonText: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#fff',
     },
-    followButton: {
+    followedButton: {
         marginBottom: 5,
         backgroundColor: '#FA9191',
         paddingVertical: 10,

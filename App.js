@@ -63,6 +63,7 @@ const AccuntStack = () => {
       <Stack.Screen name="Map" component={MapScreen} />
       <Stack.Screen name="FollowList" component={FollowListScreen} />
       <Stack.Screen name="User" component={UserScreen} />
+      {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
 
     </Stack.Navigator>
   );
