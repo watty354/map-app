@@ -1,6 +1,6 @@
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { db, auth, getFolloweredUsersData } from '../lib/firebase'
-import { doc, setDoc, collection, addDoc, Timestamp, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, collection, updateDoc, Timestamp, arrayUnion, getDoc } from "firebase/firestore";
 import React, { useEffect, useState, useRef } from 'react';
 import { async } from '@firebase/util';
 
@@ -11,17 +11,22 @@ export const UserScreen = ({ route }) => {
     //フォローの確認
     useEffect(() => {
         const isFollowedConfirmation = async(user_id) => {
-            const followedIds =  await getFolloweredUsersData();
-            if (followedIds.includes(user_id)) {
+            const followedarray =  await getFolloweredUsersData();
+            if (followedarray.some(innerArray => innerArray.includes(user_id))) {
                 setIsFollowed(true);
             }
         }
         isFollowedConfirmation(user.user_id);
-    }, []);
+    }, [user]);
 
     // フォロー申請処理
     const handleFollow = async () => {
         const uid = auth.currentUser.uid;
+        const followDocRef = doc(db, "follow", uid);
+        const followDoc = await getDoc(followDocRef);
+        if (!followDoc.exists()) {
+          await setDoc(followDocRef, {});
+        }
         //フォローTBL登録
         const data = {
             follower_id: uid,
@@ -29,7 +34,7 @@ export const UserScreen = ({ route }) => {
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         }
-        await setDoc(doc(db, "follow", uid), data);
+        await updateDoc(followDocRef, data);
         setIsFollowed(true)
     };
 
@@ -46,11 +51,9 @@ export const UserScreen = ({ route }) => {
                 </TouchableOpacity>
             ) : (
                 <TouchableOpacity style={styles.followButton} onPress={handleFollow} >
-                    <Text style={styles.followButtonText}>フォローする</Text>
+                    <Text style={styles.ButtonText}>フォローする</Text>
                 </TouchableOpacity>
-
             )}
-
         </View>
     );
 }
@@ -71,7 +74,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
-    followButtonText: {
+    followButton: {
         marginBottom: 5,
         backgroundColor: '#EB6383',
         paddingVertical: 10,

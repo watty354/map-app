@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { onAuthStateChanged, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
-import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay, mapDisplayNone } from '../lib/firebase'
+import { db, getLoginUsersData, getSearchName, auth, getAllUsers, getFollowedData } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 
 export const AccuntScreen = ({ navigation }) => {
     const [userId, setUserId] = useState('');
     const [isFollowRequested, setIsFollowRequested] = useState(false);
     const [loginUsersData, setLoginUsersData] = useState([]);
+    const [userName, setName] = useState('');
 
     //ログインしてるユーザを取得
     useEffect(() => {
@@ -25,10 +26,17 @@ export const AccuntScreen = ({ navigation }) => {
     };
 
     // フォロー申請画面に遷移するハンドラー
-    const handleFollowRequest = () => {
-        const action = "follow";
-        navigation.navigate('List', {action: action});
+    const handleFollowRequest = async() => {
+        const user = await getFollowedData();
+        console.log(user);
+        navigation.navigate('List', {user: user});
     };
+
+    //名前検索
+    const handleSearchName = async() => {
+        const user = await getSearchName(userName);
+        navigation.navigate('List', {user: user});
+    }
 
     // ログインしていない場合はログインページにリダイレクト
     if (!loginUsersData) {
@@ -55,11 +63,11 @@ export const AccuntScreen = ({ navigation }) => {
 
 
             <TextInput
-                value={userId}
+                value={userName}
                 onChangeText={(value) => setName(value)}
                 style={{ marginVertical: 5, width: '80%', padding: 10, borderWidth: 1, borderRadius: 5 }}
             />
-            <TouchableOpacity style={styles.loginButton}>
+            <TouchableOpacity style={styles.loginButton} onPress={handleSearchName} >
                 <Text style={styles.loginButtonText}>ID検索</Text>
             </TouchableOpacity>
 

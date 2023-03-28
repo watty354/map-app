@@ -1,50 +1,61 @@
 import { useState, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, FlatList, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, FlatList, SafeAreaView, ScrollView, RefreshControl, View, Text } from 'react-native';
 import { ListItem } from "../components/ListItem";
 import { db, getChatUsersData, getAllUsers, auth, getFollowedData } from '../lib/firebase'
 
 
 export const ListScreen = ({ route, navigation }) => {
-  // console.log(Constants.manifest.extra.newsApiKey);
-  
   const [usersData, setUsersData] = useState([]);
-  const [isRequest, setIsRequest] = useState([false]);
-  
+  const [refreshing, setRefreshing] = useState(false);
 
-  //初期化時:共有してるユーザを取得
-  useEffect(() => {
-    const fetchData = async () => {
-      if (route.params?.route === 'chat') {
-        const uid = auth.currentUser.uid;
-        const data = await getChatUsersData(uid);
-        setUsersData(data);
-      } else {
-        const data = await getAllUsers();
-        setUsersData(data);
+  const { user } = route.params;
+
+    //初期化時:共有してるユーザを取得
+    useEffect(() => {
+      setUsersData(user);
+    }, []);
+
+    const onRefresh = async () => {
+      setRefreshing(true);
+      try {
+        // データの更新処理
+        setUsersData(usersData);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setRefreshing(false);
       }
-      setIsRequest(true);
     };
-    fetchData();
-    console.log(route.params);
-  }, [route]);
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={usersData}
-        renderItem={({ item }) => (
-          <ListItem
-            imageUrl={item.imageUrl}
-            displayName={item.displayName}
-            onPress={() => navigation.navigate('Chat', { user: item })}
+  
+    return (
+      <SafeAreaView style={styles.container}>
+        {usersData.length !== 0 ? (
+          <FlatList
+            data={usersData}
+            renderItem={({ item }) => (
+              <ListItem
+                imageUrl={item.imageUrl}
+                displayName={item.displayName}
+                onPress={() => navigation.navigate('User', { user: item })}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />
+        ) : (
+          <View style={styles.noUsersContainer}>
+            <Text style={styles.noUsersText}>ユーザーが見つかりませんでした。</Text>
+          </View>
         )}
-        keyExtractor={(item, index) => index.toString()}
-      />
-      <StatusBar style="auto" />
-    </SafeAreaView>
-  );
+        {refreshing && (
+          <View style={styles.refreshIndicator}>
+            <ActivityIndicator />
+          </View>
+        )}
+        <StatusBar style="auto" />
+      </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -52,25 +63,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  itemContainer: {
-    height: 100,
-    width: "100%",
-    flexDirection: "row",
-  },
-  leftContainer: {
-    width: 100,
-  },
-  rightContainer: {
+  noUsersContainer: {
     flex: 1,
-    padding: 10,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  text: {
-    fontSize: 16,
+  noUsersText: {
+    fontSize: 18,
+    color: '#555',
   },
-  subText: {
-    fontSize: 12,
-    color: "gray",
-  }
+  refreshIndicator: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -20 }, { translateY: -20 }],
+  },
 
 });

@@ -3,15 +3,12 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { StyleSheet, View, Button, Image, TouchableOpacity, Text , AppState} from 'react-native';
 import * as Location from 'expo-location';
 import { collection, query, where, getDocs , onSnapshot} from 'firebase/firestore';
-import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay ,mapDisplayNone } from '../lib/firebase'
+import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay ,mapDisplayNone, getMapFollowUsersData, getMatchingIds } from '../lib/firebase'
 import { userLocation } from '../lib/location';
 import { LoginPrompt } from '../components/LoginPrompt'
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export const MapScreen = ({ route, navigation }) => {
-  // const { article } = route.params;
-  //const { user } = route.params;
-
   const [usersData, setUsersData] = useState([]);
   const [loginUsersData, setLoginUsersData] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,7 +23,7 @@ export const MapScreen = ({ route, navigation }) => {
   //共有してるユーザを取得
   useEffect(() => {
     const fetchUsersData = async () => {
-      const data = await getMapUsersData();
+      const data = await getMapFollowUsersData();
       setUsersData(data);
     };
     fetchUsersData();
@@ -43,18 +40,25 @@ export const MapScreen = ({ route, navigation }) => {
   
   //リアルタイムDB取得のおまじない
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(collection(db, 'users'), where('displayMap', '==', true)),
-      (querySnapshot) => {
-        const data = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setUsersData(data);
-      }
-    );
-    return () => unsubscribe();
+    const fetchData = async () => {
+      const matchingIds = await getMatchingIds();
+      const unsubscribe = onSnapshot(
+        query(collection(db, 'users'), where('displayMap', '==', true)),
+        (querySnapshot) => {
+          const data = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          const matchingUsers = data.filter(user => matchingIds.includes(user.user_id));
+          console.log(matchingUsers)
+          setUsersData(matchingUsers);
+        }
+      );
+      return () => unsubscribe();
+    };
+    fetchData();
   }, []);
+  
 
   //マップ初期表示
   const [mapRegion, setMapRegion] = useState({

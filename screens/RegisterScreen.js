@@ -25,6 +25,8 @@ export const RegisterScreen = ( { navigation }) => {
           country: "",
           email: email,
           passord: password,
+          displayName: "仮名まだなし",
+          displayMap: false,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
         }

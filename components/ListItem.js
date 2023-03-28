@@ -15,10 +15,16 @@ export const ListItem = (props) => {
     return (
         <TouchableOpacity style={styles.itemContainer} onPress={props.onPress}>
           <View style={styles.leftContainer}>
+          {props.imageUrl ? (
             <Image
               style={styles.image}
               source={{ url: props.imageUrl}}
             />
+          ):(
+            <Image
+            source={require('../image/NoneImage.png')}
+            style={styles.image} />
+          )}
           </View>
           <View style={styles.rightContainer}>
             <Text numberOfLines={3} style={styles.displayName}>
