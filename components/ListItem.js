@@ -16,12 +16,12 @@ export const ListItem = (props) => {
         <TouchableOpacity style={styles.itemContainer} onPress={props.onPress}>
           <View style={styles.leftContainer}>
             <Image
-              style={{ width: 100, height: 100 }}
+              style={styles.image}
               source={{ url: props.imageUrl}}
             />
           </View>
           <View style={styles.rightContainer}>
-            <Text numberOfLines={3} style={styles.text}>
+            <Text numberOfLines={3} style={styles.displayName}>
               {props.displayName}</Text>
           </View>
       </TouchableOpacity>
@@ -29,24 +29,29 @@ export const ListItem = (props) => {
   }
 
   const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
     itemContainer: {
       height: 100,
       width: "100%",
       flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
     },
-    leftContainer: {
-      width: 100,
+    image: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      marginRight: 10,
     },
-    rightContainer: {
-      flex: 1,
-      padding: 10,
-      justifyContent: 'space-between',
-    },
-    text: {
-      fontSize: 16,
+    displayName: {
+      fontSize: 18,
+      fontWeight: "bold",
     },
     subText: {
-      fontSize: 12,
+      fontSize: 14,
       color: "gray",
     }
   

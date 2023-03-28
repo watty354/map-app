@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
-import { doc, collection, onSnapshot, serverTimestamp, query, orderBy, setDoc, getDoc, addDoc, toDate, Timestamp } from 'firebase/firestore';
+import { doc, collection, onSnapshot, arrayUnion, query, orderBy, setDoc, getDoc, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native';
 
 
@@ -26,6 +26,7 @@ export const ChatScreen = ({ route }) => {
                 ...doc.data(),
                 createdAt: doc.data().createdAt ? doc.data().createdAt.toDate() : new Date(),
                 _id: doc.id,
+                avatar: user.imageUrl,
               });
             });
             setMessages(messages);
@@ -50,6 +51,12 @@ export const ChatScreen = ({ route }) => {
     if (!chatDoc.exists()) {
       await setDoc(chatDocRef, {});
     }
+    data = {
+      talkId: arrayUnion(auth.currentUser.uid),
+      senderId: auth.currentUser.uid,
+      receiverId: user.user_id
+    }
+    await updateDoc(doc(db, "chats", chatId), data);
 
     const promises = messages.map((message) => {
       // if (!message.createdAt) {
@@ -58,6 +65,8 @@ export const ChatScreen = ({ route }) => {
       return addDoc(collection(chatDocRef, 'messages'), {
         ...message,
         // createdAt: Timestamp.now(),
+        senderId: auth.currentUser.uid,
+        receiverId: user.user_id,
       });
     });
 

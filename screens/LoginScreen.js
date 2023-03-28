@@ -42,6 +42,9 @@ export const LoginScreen = ({ navigation }) => {
         const errorMessage = error.message;
         console.log(errorCode);
       });
+
+      // LOG  auth/user-not-found
+      // LOG  auth/wrong-password
   // .catch((error) => {
   //     console.log(`ログイン情報の維持設定エラー: ${error}`);
   // });

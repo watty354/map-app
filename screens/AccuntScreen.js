@@ -26,7 +26,8 @@ export const AccuntScreen = ({ navigation }) => {
 
     // フォロー申請画面に遷移するハンドラー
     const handleFollowRequest = () => {
-        navigation.navigate('FollowList');
+        const action = "follow";
+        navigation.navigate('List', {action: action});
     };
 
     // ログインしていない場合はログインページにリダイレクト

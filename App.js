@@ -7,9 +7,10 @@ import { RegisterScreen } from './screens/RegisterScreen'
 import { LoginScreen } from './screens/LoginScreen'
 import { ProfileScreen } from './screens/ProfileScreen'
 import { AccuntScreen } from './screens/AccuntScreen'
-import { FollowListScreen } from './screens/FollowListScreen'
+import { ListScreen } from './screens/ListScreen'
 import { UserScreen } from './screens/UserScreen'
 import { ChatScreen } from './screens/ChatScreen' 
+import { ChatListScreen } from './screens/ChatList'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { db, auth, handleUploadPhoto } from './lib/firebase'
@@ -28,6 +29,8 @@ const screenOption = ({ route }) => ({
       iconName = "beer";
     } else if (route.name === 'AccuntTab') {
       iconName = "ios-people-sharp";
+    } else if (route.name === 'ChatTab') {
+      iconName = "chatbubbles";
     }
 
     return <Ionicons name={iconName} size={size} color={iconColor} />;
@@ -62,8 +65,16 @@ const AccuntStack = () => {
     <Stack.Navigator>
       <Stack.Screen name="Accunt" component={AccuntScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Map" component={MapScreen} />
-      <Stack.Screen name="FollowList" component={FollowListScreen} />
+      <Stack.Screen name="List" component={ListScreen} />
       <Stack.Screen name="User" component={UserScreen} />
+      <Stack.Screen name="Chat" component={ChatScreen} />
+    </Stack.Navigator>
+  );
+}
+const ChatStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="List" component={ChatListScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
     </Stack.Navigator>
   );
@@ -82,6 +93,7 @@ export default function App() {
         <Tab.Navigator screenOptions={screenOption}>
           <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false,title: "アカウント" }}/>
           <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false,title: "マップ"}}/>
+          <Tab.Screen name="ChatTab" component={ChatStack} options={{ headerShown: false,title: "トーク",initialParams:{ route: 'chat' }}}/>
         </Tab.Navigator>
       ) : (
         <Tab.Navigator screenOptions={screenOption}>

@@ -1,26 +1,33 @@
 import { useState, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, FlatList, SafeAreaView, ScrollView} from 'react-native';
+import { StyleSheet, FlatList, SafeAreaView, ScrollView } from 'react-native';
 import { ListItem } from "../components/ListItem";
-import { db, getLoginUsersData, getMapUsersData, auth, getFollowedData } from '../lib/firebase'
+import { db, getChatUsersData, getAllUsers, auth, getFollowedData } from '../lib/firebase'
 
 
-export const FollowListScreen = ({navigation}) => {
+export const ListScreen = ({ route, navigation }) => {
   // console.log(Constants.manifest.extra.newsApiKey);
+  
   const [usersData, setUsersData] = useState([]);
   const [isRequest, setIsRequest] = useState([false]);
+  
 
   //初期化時:共有してるユーザを取得
   useEffect(() => {
-    const fetchUsersData = async () => {
-      const data = await getMapUsersData();
-      setUsersData(data);
-      if (data) {
-        setIsRequest(true)
+    const fetchData = async () => {
+      if (route.params?.route === 'chat') {
+        const uid = auth.currentUser.uid;
+        const data = await getChatUsersData(uid);
+        setUsersData(data);
+      } else {
+        const data = await getAllUsers();
+        setUsersData(data);
       }
+      setIsRequest(true);
     };
-    fetchUsersData();
-  }, []);
+    fetchData();
+    console.log(route.params);
+  }, [route]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -30,7 +37,7 @@ export const FollowListScreen = ({navigation}) => {
           <ListItem
             imageUrl={item.imageUrl}
             displayName={item.displayName}
-            onPress={() => navigation.navigate('Chat', { user: item})}
+            onPress={() => navigation.navigate('Chat', { user: item })}
           />
         )}
         keyExtractor={(item, index) => index.toString()}
