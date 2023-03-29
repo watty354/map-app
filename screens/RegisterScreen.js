@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import firebase from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, collection, addDoc, Timestamp} from "firebase/firestore";
-import  { db } from '../lib/firebase'
+import { doc, setDoc, collection, addDoc, Timestamp } from "firebase/firestore";
+import { db } from '../lib/firebase'
 import { UserContext } from '../contexts/userContexts'
+import { ButtunPrompt } from '../components/ButtunPrompt'
 
 
-export const RegisterScreen = ( { navigation }) => {
+export const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // const {setUser} = userContext(UserContext)
 
   //登録
   const handleRegister = () => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential)=> {
-      // Signed in
+      .then((userCredential) => {
+        // Signed in
         const uid = userCredential.user.uid;
         data = {
           user_id: uid,
@@ -32,12 +31,23 @@ export const RegisterScreen = ( { navigation }) => {
         }
         setDoc(doc(db, "users", uid), data);
         navigation.navigate('Profile');
-        const docRef = addDoc(collection(db, "users"), {
-        })
+        // const docRef = addDoc(collection(db, "users"), {
+        // })
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+
+        if (errorCode === 'auth/invalid-email') {
+          Alert.alert('エラー', 'メールアドレスの形式が正しくありません');
+        } else if (errorCode === 'auth/invalid-password') {
+          Alert.alert('エラー', 'パスワード6文字以上で入力して下さい');
+        } else if (errorCode === 'auth/email-already-in-use') {
+          Alert.alert('エラー', 'そのユーザーはすでに存在してます');
+        } else {
+          alert(errorMessage);
+          console.log(errorMessage)
+        }
       });
   }
 
@@ -56,8 +66,8 @@ export const RegisterScreen = ( { navigation }) => {
         onChangeText={(text) => setPassword(text)}
         secureTextEntry
       />
-      <Button
-        title="Login"
+      <ButtunPrompt
+        action="新規作成"
         onPress={handleRegister}
       />
     </View>

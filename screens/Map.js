@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Button, Image, TouchableOpacity, Text , AppState} from 'react-native';
+import { StyleSheet, View, Button, Image, TouchableOpacity, Text, AppState } from 'react-native';
 import * as Location from 'expo-location';
-import { collection, query, where, getDocs , onSnapshot} from 'firebase/firestore';
-import { db, getLoginUsersData, getMapUsersData, auth, mapDisplay ,mapDisplayNone, getMapFollowUsersData, getMatchingIds } from '../lib/firebase'
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { db, getLoginUsersData, getUserData, auth, mapDisplay, mapDisplayNone, getMapFollowUsersData, getMatchingIds } from '../lib/firebase'
 import { userLocation } from '../lib/location';
-import { LoginPrompt } from '../components/LoginPrompt'
+import { ButtunPrompt } from '../components/ButtunPrompt'
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export const MapScreen = ({ route, navigation }) => {
@@ -37,9 +37,10 @@ export const MapScreen = ({ route, navigation }) => {
     };
     fetchLoginUsersData();
   }, []);
-  
+
   //リアルタイムDB取得のおまじない
   useEffect(() => {
+    console.log(markerVisible);
     const fetchData = async () => {
       const matchingIds = await getMatchingIds();
       const unsubscribe = onSnapshot(
@@ -58,7 +59,7 @@ export const MapScreen = ({ route, navigation }) => {
     };
     fetchData();
   }, []);
-  
+
 
   //マップ初期表示
   const [mapRegion, setMapRegion] = useState({
@@ -107,34 +108,38 @@ export const MapScreen = ({ route, navigation }) => {
     }
   }
   // アプリの状態を監視
-const handleAppStateChange = (nextAppState) => {
-  if (nextAppState === 'active') {
-    // アプリがフォアグラウンドに移行したときの処理
-    mapDisplayNone();
-  } else if (nextAppState === 'background') {
-    // アプリがバックグラウンドに移行したときの処理
-    mapDisplayNone();
+  const handleAppStateChange = (nextAppState) => {
+    if (nextAppState === 'active') {
+      // アプリがフォアグラウンドに移行したときの処理
+      setMarkerVisible(false);
+      mapDisplayNone();
+    } else if (nextAppState === 'background') {
+      // アプリがバックグラウンドに移行したときの処理
+      setMarkerVisible(false);
+      mapDisplayNone();
+    }
   }
-}
 
-// AppStateのリスナーを登録
-// const timerId = startTimer(); // 最初にタイマーをスタート
-AppState.addEventListener('change', handleAppStateChange);
+  // AppStateのリスナーを登録
+  // const timerId = startTimer(); // 最初にタイマーをスタート
+  AppState.addEventListener('change', handleAppStateChange);
 
-  const handleLoginPress = () => {
-    navigation.navigate('Login');
-  };
+  const handleMarkerPress = async (userId) => {
+    if (userId !== auth.currentUser.uid) {
+      const userData = await getUserData(userId);
+      navigation.navigate('Chat', { user: userData })
+    }
+  }
 
-  
+
   return (
     <View style={styles.container}>
       {isAuthenticated ? (
-      <><MapView style={styles.map}
+        <><MapView style={styles.map}
           region={mapRegion}
           provider={PROVIDER_GOOGLE}
         >
           {markerVisible && (
-
             <Marker
               coordinate={{
                 latitude: mapRegion.latitude,
@@ -146,10 +151,10 @@ AppState.addEventListener('change', handleAppStateChange);
                 <Image
                   source={{ uri: loginUsersData[0].imageUrl }}
                   style={styles.markerImage} />
-              ):(
+              ) : (
                 <Image
-                source={require('../image/NoneImage.png')}
-                style={styles.markerImage} />
+                  source={require('../image/NoneImage.png')}
+                  style={styles.markerImage} />
               )}
             </Marker>
           )}
@@ -160,8 +165,9 @@ AppState.addEventListener('change', handleAppStateChange);
                 latitude: user.latitude,
                 longitude: user.longitude,
               }}
-              // title={user.displayname}
-              description={user.displayname}
+              title={user.displayname}
+              description={user.displayName}
+              onPress={() => handleMarkerPress(user.user_id)}
             >
               <Image
                 source={{ uri: user.imageUrl }}
@@ -177,8 +183,11 @@ AppState.addEventListener('change', handleAppStateChange);
           </View></>
       ) : (
         <View>
-        <LoginPrompt onPress={handleLoginPress} />
-      </View>
+          <ButtunPrompt
+                action="ログイン"
+                onPress={() => navigation.navigate('Login')}
+              />
+        </View>
       )}
     </View>
   );
@@ -204,7 +213,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: 'red',
+    borderColor: '#EB6383',
   },
   buttonContainer: {
     position: 'absolute',

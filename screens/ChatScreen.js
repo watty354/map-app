@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Bubble, GiftedChat } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat, InputToolbar} from 'react-native-gifted-chat';
 import { doc, collection, onSnapshot, arrayUnion, query, orderBy, setDoc, getDoc, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native';
 
@@ -26,7 +26,11 @@ export const ChatScreen = ({ route }) => {
                 ...doc.data(),
                 createdAt: doc.data().createdAt ? doc.data().createdAt.toDate() : new Date(),
                 _id: doc.id,
-                avatar: user.imageUrl,
+                // user: {
+                //   _id: user.user_id,
+                //   name: user.disdisplayName,
+                //   avatar: user.imageUrl,
+                // },
               });
             });
             setMessages(messages);
@@ -74,29 +78,48 @@ export const ChatScreen = ({ route }) => {
   };
 
 
+// ヘッダー試行錯誤
+  // const renderChatHeader = () => {
+  //   const name = user.displayName;
+  //   return (
+  //     <View style={{ backgroundColor: '#fff', paddingVertical: 10 }}>
+  //       <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>{name}</Text>
+  //     </View>
+  //   );
+  // };
+
+  // const renderInputToolbar = (props) => (
+  //   <InputToolbar {...props} containerStyle={{ backgroundColor: '#fff' }}>
+  //     <View style={{ backgroundColor: '#fff', paddingVertical: 10 }}>
+  //       <Text style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>{user.displayName}</Text>
+  //     </View>
+  //   </InputToolbar>
+  // );
+
 
   return (
-    <View style={{ flex: 1 }}>
-
-      <GiftedChat
-        messages={messages}
-        onSend={messages => onSend(messages)}
-        user={{
-          _id: auth.currentUser.uid,
-        }}
-        renderBubble={props => {
-          return (
-            <Bubble {...props}
-              wrapperStyle={{
-                right: {
-                  backgroundColor: '#EB6383',
-                },
-              }}
-            />
-          );
-        }}
-      />
-    </View>
+<View style={{ flex: 1 }}>
+  <View style={{ height: 1 }} />
+  <GiftedChat
+    messages={messages}
+    onSend={messages => onSend(messages)}
+    user={{
+      _id: auth.currentUser.uid,
+    }}
+    renderBubble={props => {
+      return (
+        <Bubble {...props}
+          wrapperStyle={{
+            right: {
+              backgroundColor: '#EB6383',
+            },
+          }}
+        />
+      );
+    }}
+    // renderInputToolbar={renderInputToolbar}
+  />
+</View>
   )
 };
 
