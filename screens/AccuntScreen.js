@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { onAuthStateChanged, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
-import { db, getLoginUsersData, getSearchName, auth, getAllUsers, getFollowedData } from '../lib/firebase'
+import { db, getLoginUsersData, getSearchName, auth, imageStore, getFollowedData } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 
@@ -46,7 +46,11 @@ export const AccuntScreen = ({ navigation }) => {
 
     const onPickImage = async () => {
         const uri = await pickImage();
-        setPhotoUrl(uri);
+        const beforeUri = loginUsersData[0]?.imageUrl ? loginUsersData[0].imageUrl : null;
+        await imageStore(beforeUri, uri);
+        const data = await getLoginUsersData();
+        setLoginUsersData(data)
+
     };
 
     return (

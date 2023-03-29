@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Button, Image, TouchableOpacity, Text, AppState } from 'react-native';
+import { StyleSheet, View, Button, Image, TouchableOpacity, Text, AppState, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { db, getLoginUsersData, getUserData, auth, mapDisplay, mapDisplayNone, getMapFollowUsersData, getMatchingIds } from '../lib/firebase'
 import { userLocation } from '../lib/location';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export const MapScreen = ({ route, navigation }) => {
   const [usersData, setUsersData] = useState([]);
@@ -95,6 +96,7 @@ export const MapScreen = ({ route, navigation }) => {
   //共有ボタン押下アクション
   const handlePress = () => {
     // fetchLoginUsersData();
+    Alert.alert('開始', '今から20分間相互フォローの人にに位置が共有されます');
     if (!markerVisible) {
       setMarkerVisible(true);
       mapDisplay(mapRegion.latitude, mapRegion.longitude);
@@ -167,7 +169,7 @@ export const MapScreen = ({ route, navigation }) => {
               }}
               title={user.displayname}
               description={user.displayName}
-              onPress={() => handleMarkerPress(user.user_id)}
+              onPress={() => navigation.navigate('Chat', { user: user })}
             >
               <Image
                 source={{ uri: user.imageUrl }}
@@ -178,6 +180,7 @@ export const MapScreen = ({ route, navigation }) => {
             <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>ここおるで〜</Text>
+                <Ionicons name="beer-outline" size={70} style={styles.icon} />
               </View>
             </TouchableOpacity>
           </View></>
@@ -222,13 +225,20 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#EB6383',
-    padding: 16,
-    borderRadius: 8,
+    padding: 24,
+    height: 150,
+    width: 150,
+    borderRadius: 50,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 5,
   },
+  icon: {
+    color: '#fff',
+    textAlign: 'center',
+  }
 });

@@ -41,8 +41,8 @@ export const ProfileScreen = ({navigation}) => {
 
   //
   const onPickImage = async () => {
-    const uri = await pickImage();
-    setPhotoUrl(uri);
+    const image = await pickImage();
+    setPhotoUrl(image);
   };
 
   return (

@@ -91,9 +91,9 @@ export default function App() {
     <NavigationContainer>
       {user ? (
         <Tab.Navigator screenOptions={screenOption}>
-          <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false,title: "アカウント" }}/>
-          <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false,title: "マップ"}}/>
           <Tab.Screen name="ChatTab" component={ChatStack} options={{ headerShown: false,title: "トーク",initialParams:{ route: 'chat' }}}/>
+          <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false,title: "マップ"}}/>
+          <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false,title: "アカウント" }}/>
         </Tab.Navigator>
       ) : (
         <Tab.Navigator screenOptions={screenOption}>
