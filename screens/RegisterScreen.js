@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import firebase from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from '../lib/firebase'
 import { UserContext } from '../contexts/userContexts'
 import { ButtunPrompt } from '../components/ButtunPrompt'
+import { CheckBox } from 'react-native-elements';
 
 
 export const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
 
   //登録
   const handleRegister = () => {
+    if (!isChecked) {
+      Alert.alert('エラー', '規約に同意してください');
+      return;
+    }
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -24,13 +31,13 @@ export const RegisterScreen = ({ navigation }) => {
           country: "",
           email: email,
           passord: password,
-          displayName: "仮名まだなし",
+          displayName: name,
           displayMap: false,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
         }
         setDoc(doc(db, "users", uid), data);
-        navigation.navigate('Profile');
+        navigation.navigate('AccuntTab');
         // const docRef = addDoc(collection(db, "users"), {
         // })
       })
@@ -51,6 +58,10 @@ export const RegisterScreen = ({ navigation }) => {
       });
   }
 
+  const handleLinkPress = () => {
+    return;
+  }
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -66,6 +77,28 @@ export const RegisterScreen = ({ navigation }) => {
         onChangeText={(text) => setPassword(text)}
         secureTextEntry
       />
+      <TextInput
+        placeholder="表示される名前(ニックネーム)"
+        value={name}
+        onChangeText={(value) => setName(value)}
+        style={styles.input}
+      />
+      <View style={styles.checkboxContainer}>
+      <CheckBox
+          title={
+            <Text>
+              <Text style={styles.linkText} onPress={handleLinkPress}>
+                利用規約
+              </Text>
+              に同意する
+            </Text>
+          }
+          checked={isChecked}
+          onPress={() => setIsChecked(!isChecked)}
+          containerStyle={styles.checkbox}
+          checkedColor="#FA9191"
+        />
+      </View>
       <ButtunPrompt
         action="新規作成"
         onPress={handleRegister}
@@ -84,10 +117,27 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    borderColor: '#FA9191',
+    borderRadius: 32,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
     marginBottom: 10,
+    fontSize: 16,
+    backgroundColor: '#F8F8F8',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  checkbox: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    padding: 0,
+    margin: 0,
+  },
+  linkText: {
+    color: '#FA9191',
+    textDecorationLine: 'underline',
   },
 });

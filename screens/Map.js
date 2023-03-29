@@ -95,8 +95,22 @@ export const MapScreen = ({ route, navigation }) => {
 
   //共有ボタン押下アクション
   const handlePress = () => {
-    // fetchLoginUsersData();
-    Alert.alert('開始', '今から20分間相互フォローの人にに位置が共有されます');
+    if (markerVisible) {
+      Alert.alert('すでに押してますよ＾＾');
+      return;
+    }
+    Alert.alert('共有開始', '今から20分間相互フォローの人にに位置が共有されます', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'OK', onPress: locationNowStart},
+    ]);
+
+  }
+  
+  locationNowStart = () => {
     if (!markerVisible) {
       setMarkerVisible(true);
       mapDisplay(mapRegion.latitude, mapRegion.longitude);

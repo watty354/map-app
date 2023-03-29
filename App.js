@@ -10,6 +10,7 @@ import { AccuntScreen } from './screens/AccuntScreen'
 import { ListScreen } from './screens/ListScreen'
 import { UserScreen } from './screens/UserScreen'
 import { ChatScreen } from './screens/ChatScreen' 
+import { UsageScreen } from './screens/UsageScreen'
 import { ChatListScreen } from './screens/ChatList'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -38,14 +39,15 @@ const screenOption = ({ route }) => ({
 });
 
 
-const UserStack = () => {
+const HomeStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Usage" component={UsageScreen} options={{ title: "使い方" }}/>
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
+      {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
       <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Map" component={MapScreen} />
+      {/* <Stack.Screen name="Map" component={MapScreen} /> */}
     </Stack.Navigator>
   );
 }
@@ -68,6 +70,7 @@ const AccuntStack = () => {
       <Stack.Screen name="List" component={ListScreen} />
       <Stack.Screen name="User" component={UserScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Screen name="Usage" component={UsageScreen} options={{ title: "使い方" }}/>
     </Stack.Navigator>
   );
 }
@@ -96,10 +99,9 @@ export default function App() {
           <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false,title: "アカウント" }}/>
         </Tab.Navigator>
       ) : (
-        <Tab.Navigator screenOptions={screenOption}>
-          <Tab.Screen name="HomeTab" component={UserStack} options={{ headerShown: false,title: "ログイン" }} />
-          <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false,title: "マップ" }}/>
-        </Tab.Navigator>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+        </Stack.Navigator>
       )}
     </NavigationContainer>
   );

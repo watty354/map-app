@@ -17,12 +17,14 @@ export const ButtunPrompt = (props) => {
   if (props.action === "新規作成" || props.action === "フォロー申請一覧" || props.action === "始める" ){
     isPrimary= true;
   }
+
   return (
     <View style={styles.content}>
       <TouchableOpacity
         style={[
           styles.loginButton,
-          isPrimary ? { backgroundColor: '#EB6383' } : null
+          isPrimary ? { backgroundColor: '#EB6383' } : null,
+          props.action === "５秒でわかる使い方" ? { backgroundColor: '#BDBDBD' } : null
         ]}
         onPress={props.onPress}
       >

@@ -11,6 +11,7 @@ export const AccuntScreen = ({ navigation }) => {
     const [isFollowRequested, setIsFollowRequested] = useState(false);
     const [loginUsersData, setLoginUsersData] = useState([]);
     const [userName, setName] = useState('');
+    const action = "Accunt";
 
     //ログインしてるユーザを取得
     useEffect(() => {
@@ -55,6 +56,7 @@ export const AccuntScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.subContainer}>
             <TouchableOpacity onPress={onPickImage}>
                 {loginUsersData[0]?.imageUrl ? (
                     <Image source={{ uri: loginUsersData[0].imageUrl }} style={styles.avatar} />
@@ -65,23 +67,33 @@ export const AccuntScreen = ({ navigation }) => {
                 )}
             </TouchableOpacity>
             <Text style={styles.name}>{loginUsersData[0]?.displayName}</Text>
+            </View>
 
 
+            <View style={styles.idContainer}>
             <TextInput
                 value={userName}
                 onChangeText={(value) => setName(value)}
-                style={{ marginVertical: 5, width: '80%', padding: 10, borderWidth: 1, borderRadius: 5 }}
+                style={styles.input}
             />
-
             <ButtunPrompt
                 action="ID検索"
                 onPress={handleSearchName}
             />
+             </View>
+
 
             <ButtunPrompt
                 action="フォロー申請一覧"
                 onPress={handleFollowRequest}
             />
+
+            <View style={styles.anatherContainer}>
+                <ButtunPrompt
+                    action="５秒でわかる使い方"
+                    onPress={() => navigation.navigate('Usage', {action : action})}
+                />
+            </View>
         </View>
 
     );
@@ -92,6 +104,16 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: 20,
+    },
+    subContainer: {
+        alignItems: 'center',
+        marginBottom: 50,
+    },
+    idContainer: {
+        marginBottom: 50,
+        width: '100%',
+        alignItems: 'center',
     },
     avatar: {
         width: 100,
@@ -111,7 +133,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     name: {
-        marginTop: 24,
+        marginTop: 12,
         fontSize: 16,
         fontWeight: '600',
     },
@@ -158,6 +180,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
+    },
+    input: {
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#FA9191',
+        borderRadius: 32,
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        marginBottom: 10,
+        fontSize: 16,
+        backgroundColor: '#F8F8F8',
     },
 });
 

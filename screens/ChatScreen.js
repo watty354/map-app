@@ -27,9 +27,8 @@ export const ChatScreen = ({ route }) => {
                 createdAt: doc.data().createdAt ? doc.data().createdAt.toDate() : new Date(),
                 _id: doc.id,
                 // user: {
-                //   _id: user.user_id,
                 //   name: user.disdisplayName,
-                //   avatar: user.imageUrl,
+                  // avatar: user.imageUrl,
                 // },
               });
             });
@@ -99,7 +98,6 @@ export const ChatScreen = ({ route }) => {
 
   return (
 <View style={{ flex: 1 }}>
-  <View style={{ height: 1 }} />
   <GiftedChat
     messages={messages}
     onSend={messages => onSend(messages)}

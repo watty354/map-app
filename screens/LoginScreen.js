@@ -12,10 +12,8 @@ export const LoginScreen = ({ navigation }) => {
   const handleLogin = () => {
 
     const auth = getAuth();
-
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-
         // Signed in
         console.log('User signed in!');
         navigation.navigate('Map');
@@ -70,10 +68,12 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    borderColor: '#FA9191',
+    borderRadius: 32,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
     marginBottom: 10,
+    fontSize: 16,
+    backgroundColor: '#F8F8F8',
   },
 });
