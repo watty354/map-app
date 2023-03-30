@@ -21,6 +21,10 @@ export const RegisterScreen = ({ navigation }) => {
       Alert.alert('エラー', '規約に同意してください');
       return;
     }
+    if (!name) {
+      Alert.alert('エラー', 'ニックネームを決めて下さい');
+      return;
+    }
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -58,8 +62,9 @@ export const RegisterScreen = ({ navigation }) => {
       });
   }
 
+  //利用規約へ
   const handleLinkPress = () => {
-    return;
+    navigation.navigate('TermsOfService');
   }
 
   return (

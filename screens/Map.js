@@ -8,6 +8,8 @@ import { userLocation } from '../lib/location';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Ionicons from '@expo/vector-icons/Ionicons';
+// import BackgroundTask from 'react-native-background-task';
+
 
 export const MapScreen = ({ route, navigation }) => {
   const [usersData, setUsersData] = useState([]);
@@ -123,30 +125,45 @@ export const MapScreen = ({ route, navigation }) => {
       }, 10000);
     }
   }
-  // アプリの状態を監視
-  const handleAppStateChange = (nextAppState) => {
-    if (nextAppState === 'active') {
-      // アプリがフォアグラウンドに移行したときの処理
-      setMarkerVisible(false);
-      mapDisplayNone();
-    } else if (nextAppState === 'background') {
-      // アプリがバックグラウンドに移行したときの処理
-      setMarkerVisible(false);
-      mapDisplayNone();
-    }
-  }
+  // // アプリの状態を監視
+  // const handleAppStateChange = (nextAppState) => {
+  //   if (nextAppState === 'active') {
+  //     // アプリがフォアグラウンドに移行したときの処理
+  //     setMarkerVisible(false);
+  //     mapDisplayNone();
+  //   } else if (nextAppState === 'background') {
+  //     // アプリがバックグラウンドに移行したときの処理
+  //     setMarkerVisible(false);
+  //     mapDisplayNone();
+  //   }
+  // }
 
   // AppStateのリスナーを登録
   // const timerId = startTimer(); // 最初にタイマーをスタート
-  AppState.addEventListener('change', handleAppStateChange);
+  // AppState.addEventListener('change', handleAppStateChange);
 
-  const handleMarkerPress = async (userId) => {
-    if (userId !== auth.currentUser.uid) {
-      const userData = await getUserData(userId);
-      navigation.navigate('Chat', { user: userData })
-    }
-  }
-
+  // const onDisplayMapChanged = (snapshot) => {
+  //   console.log("実行され四の？");
+  //   const displayMap = snapshot.data().displayMap;
+  //   if (displayMap) {
+  //     BackgroundTask.schedule({
+  //       period: 5000, // タスクの実行間隔 (ms)
+  //     });
+  //   } else {
+  //     BackgroundTask.cancel();
+  //   }
+  // };
+  
+  // BackgroundTask.define(() => {
+  //   // 5秒後に実行したい処理を記述
+  //   console.log("実行され四の？");
+  //   setMarkerVisible(false);
+  //   mapDisplayNone();
+  //   // firestoreのdispayMapをfalseにする処理を記述
+  //   BackgroundTask.finish();
+  // });
+  
+  // collection(db, 'user', auth.currentUser.uid).onSnapshot(onDisplayMapChanged);
 
   return (
     <View style={styles.container}>

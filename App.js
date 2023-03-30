@@ -12,6 +12,7 @@ import { UserScreen } from './screens/UserScreen'
 import { ChatScreen } from './screens/ChatScreen' 
 import { UsageScreen } from './screens/UsageScreen'
 import { ChatListScreen } from './screens/ChatList'
+import { TermsOfServiceScreen } from './const/TermsOfServiceScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { db, auth, handleUploadPhoto } from './lib/firebase'
@@ -45,7 +46,8 @@ const HomeStack = () => {
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Usage" component={UsageScreen} options={{ title: "使い方" }}/>
       <Stack.Screen name="Register" component={RegisterScreen} />
-      {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
+      <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       {/* <Stack.Screen name="Map" component={MapScreen} /> */}
     </Stack.Navigator>

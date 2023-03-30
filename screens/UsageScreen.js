@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 
-export const UsageScreen = ({route}) => {
+export const UsageScreen = ({route, navigation}) => {
   const { action } = route.params;
   return (
     <View style={styles.container}>
