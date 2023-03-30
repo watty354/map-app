@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button, ScrollView } from 'react-native';
 import { db, getLoginUsersData, getSearchName, auth, imageStore, getFollowedData } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
+import QRCode from 'react-native-qrcode-svg';
+import { QRCodeGenerator } from '../components/QRCodeGenerator'
 
 export const AccuntScreen = ({ navigation }) => {
     const [userId, setUserId] = useState('');
@@ -12,6 +14,7 @@ export const AccuntScreen = ({ navigation }) => {
     const [loginUsersData, setLoginUsersData] = useState([]);
     const [userName, setName] = useState('');
     const action = "Accunt";
+    const uid = 'my-user-id';
 
     //ログインしてるユーザを取得
     useEffect(() => {
@@ -30,7 +33,6 @@ export const AccuntScreen = ({ navigation }) => {
     // フォロー申請画面に遷移するハンドラー
     const handleFollowRequest = async () => {
         const user = await getFollowedData();
-        console.log(user);
         navigation.navigate('List', { user: user });
     };
 
@@ -55,6 +57,8 @@ export const AccuntScreen = ({ navigation }) => {
     };
 
     return (
+        <ScrollView>
+
         <View style={styles.container}>
             <View style={styles.subContainer}>
             <TouchableOpacity onPress={onPickImage}>
@@ -67,6 +71,8 @@ export const AccuntScreen = ({ navigation }) => {
                 )}
             </TouchableOpacity>
             <Text style={styles.name}>{loginUsersData[0]?.displayName}</Text>
+            {/* <QRCodeGenerator userId={uid} /> */}
+            <QRCode value={loginUsersData[0]?.user_id?.toString()} size={200} />
             </View>
 
 
@@ -99,6 +105,7 @@ export const AccuntScreen = ({ navigation }) => {
                 />
             </View>
         </View>
+        </ScrollView>
 
     );
 }
@@ -109,6 +116,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 20,
+        marginTop: 100,
     },
     subContainer: {
         alignItems: 'center',
