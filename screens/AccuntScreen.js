@@ -77,12 +77,16 @@ export const AccuntScreen = ({ navigation }) => {
                 style={styles.input}
             />
             <ButtunPrompt
-                action="ID検索"
+                action="名前検索"
                 onPress={handleSearchName}
             />
              </View>
 
 
+            <ButtunPrompt
+                action="QR読み取り"
+                onPress={() => navigation.navigate('QRCode')}
+            />
             <ButtunPrompt
                 action="フォロー申請一覧"
                 onPress={handleFollowRequest}

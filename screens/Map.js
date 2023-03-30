@@ -8,6 +8,7 @@ import { userLocation } from '../lib/location';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { async } from '@firebase/util';
 // import BackgroundTask from 'react-native-background-task';
 
 
@@ -74,8 +75,6 @@ export const MapScreen = ({ route, navigation }) => {
   });
 
   const [markerVisible, setMarkerVisible] = useState(false);
-  const markerTimer = useRef(null);
-
   //現在地の表示
   const userLocationNow = async () => {
     // let location = userLocation();
@@ -98,72 +97,54 @@ export const MapScreen = ({ route, navigation }) => {
   //共有ボタン押下アクション
   const handlePress = () => {
     if (markerVisible) {
-      Alert.alert('すでに押してますよ＾＾');
-      return;
+      Alert.alert('停止', '位置が共有を停止しますか？', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: locationNowStop },
+      ]);
+    } else {
+      Alert.alert('共有開始', '今から相互フォローの人に位置が共有されます', [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: locationNowStart },
+      ]);
+
     }
-    Alert.alert('共有開始', '今から20分間相互フォローの人にに位置が共有されます', [
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-      {text: 'OK', onPress: locationNowStart},
-    ]);
 
   }
-  
+
+  //位置共有開始
   locationNowStart = () => {
     if (!markerVisible) {
       setMarkerVisible(true);
       mapDisplay(mapRegion.latitude, mapRegion.longitude);
-      if (markerTimer.current) {
-        clearTimeout(markerTimer.current);
-      }
-      markerTimer.current = setTimeout(() => {
-        setMarkerVisible(false);
-        mapDisplayNone();
-      }, 10000);
     }
   }
+
+  //位置共有停止
+  locationNowStop = () => {
+    setMarkerVisible(false);
+    mapDisplayNone();
+  }
+    
   // // アプリの状態を監視
-  // const handleAppStateChange = (nextAppState) => {
-  //   if (nextAppState === 'active') {
-  //     // アプリがフォアグラウンドに移行したときの処理
-  //     setMarkerVisible(false);
-  //     mapDisplayNone();
-  //   } else if (nextAppState === 'background') {
-  //     // アプリがバックグラウンドに移行したときの処理
-  //     setMarkerVisible(false);
-  //     mapDisplayNone();
-  //   }
-  // }
-
+  const handleAppStateChange = async(nextAppState) => {
+    if (nextAppState === 'active') {
+      const data = await getLoginUsersData();
+      if (data[0].mapDisplay === false){
+        setMarkerVisible(false);
+        mapDisplayNone();
+      }
+    } 
+  }
   // AppStateのリスナーを登録
-  // const timerId = startTimer(); // 最初にタイマーをスタート
-  // AppState.addEventListener('change', handleAppStateChange);
-
-  // const onDisplayMapChanged = (snapshot) => {
-  //   console.log("実行され四の？");
-  //   const displayMap = snapshot.data().displayMap;
-  //   if (displayMap) {
-  //     BackgroundTask.schedule({
-  //       period: 5000, // タスクの実行間隔 (ms)
-  //     });
-  //   } else {
-  //     BackgroundTask.cancel();
-  //   }
-  // };
-  
-  // BackgroundTask.define(() => {
-  //   // 5秒後に実行したい処理を記述
-  //   console.log("実行され四の？");
-  //   setMarkerVisible(false);
-  //   mapDisplayNone();
-  //   // firestoreのdispayMapをfalseにする処理を記述
-  //   BackgroundTask.finish();
-  // });
-  
-  // collection(db, 'user', auth.currentUser.uid).onSnapshot(onDisplayMapChanged);
+  AppState.addEventListener('change', handleAppStateChange);
 
   return (
     <View style={styles.container}>
@@ -181,9 +162,10 @@ export const MapScreen = ({ route, navigation }) => {
               title={loginUsersData[0].displayName}
             >
               {loginUsersData[0]?.imageUrl ? (
-                <Image
-                  source={{ uri: loginUsersData[0].imageUrl }}
-                  style={styles.markerImage} />
+                <View style={styles.customMarker}>
+                  <Text style={styles.markerTitle}>{loginUsersData[0].displayName}</Text>
+                  <Image source={{ uri: loginUsersData[0].imageUrl }} style={styles.markerImage} />
+                </View>
               ) : (
                 <Image
                   source={require('../image/NoneImage.png')}
@@ -202,25 +184,29 @@ export const MapScreen = ({ route, navigation }) => {
               description={user.displayName}
               onPress={() => navigation.navigate('Chat', { user: user })}
             >
-              <Image
-                source={{ uri: user.imageUrl }}
-                style={styles.markerImage} />
+              <View style={styles.customMarker}>
+                <Text style={styles.markerTitle}>{user.displayName}</Text>
+                <Image
+                  source={{ uri: user.imageUrl }}
+                  style={styles.markerImage} />
+              </View>
             </Marker>
           ))}
-        </MapView><View style={styles.buttonContainer}>
+        </MapView>
+        <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
-              <View style={styles.button}>
-                <Text style={styles.buttonText}>ここおるで〜</Text>
-                <Ionicons name="beer-outline" size={70} style={styles.icon} />
+              <View style={[styles.button, {backgroundColor: markerVisible ? '#BDBDBD' : '#EB6383'}]}>
+                <Text style={styles.buttonText}>{markerVisible ? '停止' : 'ここおるで〜'}</Text>
+                <Ionicons name={[markerVisible ? "stop-circle-outline" : "beer-outline"]} size={70} style={styles.icon} />
               </View>
             </TouchableOpacity>
           </View></>
       ) : (
         <View>
           <ButtunPrompt
-                action="ログイン"
-                onPress={() => navigation.navigate('Login')}
-              />
+            action="ログイン"
+            onPress={() => navigation.navigate('Login')}
+          />
         </View>
       )}
     </View>
@@ -271,5 +257,22 @@ const styles = StyleSheet.create({
   icon: {
     color: '#fff',
     textAlign: 'center',
-  }
+  },
+  customMarker: {
+    alignItems: 'center',
+    // backgroundColor: '#eee',
+    borderRadius: 8,
+    padding: 8,
+  },
+  markerIcon: {
+    height: 32,
+    width: 32,
+  },
+  markerTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: 4,
+    textAlign: 'center',
+    color: "#EB6383"
+  },
 });

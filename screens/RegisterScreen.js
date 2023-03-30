@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import firebase from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, collection, addDoc, Timestamp } from "firebase/firestore";
-import { db } from '../lib/firebase'
+import { db,getSearchName } from '../lib/firebase'
 import { UserContext } from '../contexts/userContexts'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { CheckBox } from 'react-native-elements';
@@ -16,7 +16,7 @@ export const RegisterScreen = ({ navigation }) => {
   const [isChecked, setIsChecked] = useState(false);
 
   //登録
-  const handleRegister = () => {
+  const handleRegister = async() => {
     if (!isChecked) {
       Alert.alert('エラー', '規約に同意してください');
       return;
@@ -25,6 +25,16 @@ export const RegisterScreen = ({ navigation }) => {
       Alert.alert('エラー', 'ニックネームを決めて下さい');
       return;
     }
+
+    //displayName重複チェック
+    if (name) {
+      const followedarray =  await getSearchName(name);
+      if (followedarray.some(user => user.displayName === name)) {
+        Alert.alert('エラー', 'ニックネームが他の人と重複してるので他のニックネームをつけて下さい');
+        return;
+      }
+    }
+
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {

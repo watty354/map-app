@@ -20,7 +20,7 @@ export const HomeScreen = ({ navigation }) => {
             .then((userCredential) => {
                 // Signed in
                 console.log('User signed in!');
-                navigation.navigate('Map');
+                navigation.navigate('AccuntTab');
             })
             .catch((error) => {
                 const errorCode = error.code;

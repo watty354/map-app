@@ -12,6 +12,7 @@ import { UserScreen } from './screens/UserScreen'
 import { ChatScreen } from './screens/ChatScreen' 
 import { UsageScreen } from './screens/UsageScreen'
 import { ChatListScreen } from './screens/ChatList'
+// import { QRCodeScannerScreen } from './screens/QRCodeScannerScreen'
 import { TermsOfServiceScreen } from './const/TermsOfServiceScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -72,6 +73,7 @@ const AccuntStack = () => {
       <Stack.Screen name="List" component={ListScreen} />
       <Stack.Screen name="User" component={UserScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
+      {/* <Stack.Screen name="QRCode" component={QRCodeScannerScreen} /> */}
       <Stack.Screen name="Usage" component={UsageScreen} options={{ title: "使い方" }}/>
     </Stack.Navigator>
   );
@@ -102,7 +104,7 @@ export default function App() {
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+          <Stack.Screen name="HomeStack" component={HomeStack} options={{ headerShown: false }} />
         </Stack.Navigator>
       )}
     </NavigationContainer>
