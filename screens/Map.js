@@ -44,7 +44,6 @@ export const MapScreen = ({ route, navigation }) => {
 
   //リアルタイムDB取得のおまじない
   useEffect(() => {
-    console.log(markerVisible);
     const fetchData = async () => {
       const matchingIds = await getMatchingIds();
       const unsubscribe = onSnapshot(
@@ -55,7 +54,7 @@ export const MapScreen = ({ route, navigation }) => {
             ...doc.data(),
           }));
           const matchingUsers = data.filter(user => matchingIds.includes(user.user_id));
-          console.log(matchingUsers)
+          console.log(matchingUsers);
           setUsersData(matchingUsers);
         }
       );
@@ -186,9 +185,15 @@ export const MapScreen = ({ route, navigation }) => {
             >
               <View style={styles.customMarker}>
                 <Text style={styles.markerTitle}>{user.displayName}</Text>
-                <Image
+                {user?.imageUrl ? (
+                    <Image source={{ uri: user.imageUrl }} style={styles.markerImage} />
+                ) : (
+                        
+                        <Image source={require('../image/NoneImage.png')} style={styles.markerImage} />
+                )}
+                {/* <Image
                   source={{ uri: user.imageUrl }}
-                  style={styles.markerImage} />
+                  style={styles.markerImage} /> */}
               </View>
             </Marker>
           ))}

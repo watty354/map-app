@@ -12,12 +12,15 @@ import { UserScreen } from './screens/UserScreen'
 import { ChatScreen } from './screens/ChatScreen' 
 import { UsageScreen } from './screens/UsageScreen'
 import { ChatListScreen } from './screens/ChatList'
-// import { QRCodeScannerScreen } from './screens/QRCodeScannerScreen'
+import { QRCodeScannerScreen } from './screens/QRCodeScannerScreen'
 import { TermsOfServiceScreen } from './const/TermsOfServiceScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { db, auth, handleUploadPhoto } from './lib/firebase'
 import Ionicons from '@expo/vector-icons/Ionicons';
+// import { store } from './store';
+// import { Provider} from 'react-redux'
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -50,7 +53,7 @@ const HomeStack = () => {
       <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
-      {/* <Stack.Screen name="Map" component={MapScreen} /> */}
+      <Stack.Screen name="Map" component={MapScreen} />
     </Stack.Navigator>
   );
 }
@@ -73,7 +76,7 @@ const AccuntStack = () => {
       <Stack.Screen name="List" component={ListScreen} />
       <Stack.Screen name="User" component={UserScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
-      {/* <Stack.Screen name="QRCode" component={QRCodeScannerScreen} /> */}
+      <Stack.Screen name="QRCode" component={QRCodeScannerScreen} />
       <Stack.Screen name="Usage" component={UsageScreen} options={{ title: "使い方" }}/>
     </Stack.Navigator>
   );

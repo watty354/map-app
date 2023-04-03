@@ -10,13 +10,13 @@ export const UserScreen = ({ route }) => {
 
     //フォローの確認
     useEffect(() => {
-        const isFollowedConfirmation = async(user_id) => {
+        const isFollowedConfirmation = async () => {
             const followedarray =  await getFolloweredUsersData();
-            if (followedarray.some(innerArray => innerArray.includes(user_id))) {
+            if (followedarray.some(innerArray => innerArray.includes(user.user_id))) {
                 setIsFollowed(true);
             }
         }
-        isFollowedConfirmation(user.user_id);
+        isFollowedConfirmation();
     }, [user]);
 
     // フォロー申請処理
@@ -41,7 +41,13 @@ export const UserScreen = ({ route }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity>
-                <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
+            {user?.imageUrl ? (
+                    <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
+                ) : (
+                        
+                        <Image source={require('../image/NoneImage.png')} style={styles.avatar} />
+                )}
+                {/* <Image source={{ uri: user.imageUrl }} style={styles.avatar} /> */}
             </TouchableOpacity>
             <Text style={styles.name}>{user.displayName}</Text>
 

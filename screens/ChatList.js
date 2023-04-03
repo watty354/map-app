@@ -15,7 +15,6 @@ export const ChatListScreen = ({ navigation }) => {
         const uid = auth.currentUser.uid;
         const data = await getChatUsersData(uid);
         setUsersData(data);
-        console.log(data)
       } 
     fetchData();
   }, []);
@@ -24,7 +23,6 @@ export const ChatListScreen = ({ navigation }) => {
     const uid = auth.currentUser.uid;
     const data = await getChatUsersData(uid);
     setUsersData(data);
-    console.log(data)
   } 
 
   const onRefresh = async () => {
