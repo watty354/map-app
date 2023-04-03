@@ -7,6 +7,8 @@ import { db,getSearchName } from '../lib/firebase'
 import { UserContext } from '../contexts/userContexts'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { CheckBox } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
+import { storePass, storeEmail} from '../store/userSlice';
 
 
 export const RegisterScreen = ({ navigation }) => {
@@ -34,23 +36,28 @@ export const RegisterScreen = ({ navigation }) => {
         return;
       }
     }
-
+    
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const uid = userCredential.user.uid;
-        data = {
-          user_id: uid,
-          country: "",
-          email: email,
-          passord: password,
-          displayName: name,
-          displayMap: false,
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
-        }
-        setDoc(doc(db, "users", uid), data);
+    .then((userCredential) => {
+      // Signed in
+      const uid = userCredential.user.uid;
+      data = {
+        user_id: uid,
+        country: "",
+        email: email,
+        passord: password,
+        displayName: name,
+        displayMap: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      }
+      setDoc(doc(db, "users", uid), data);
+
+      //reduxに保存
+      const dispatch = useDispatch();
+      dispatch(storeEmail(email));
+      dispatch(storePass(password));
         navigation.navigate('AccuntTab');
         // const docRef = addDoc(collection(db, "users"), {
         // })

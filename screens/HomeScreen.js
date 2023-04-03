@@ -7,20 +7,34 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { reload } from 'firebase/auth';
 import { getAuth, signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { db, auth } from '../lib/firebase'
+import { useDispatch, useSelector } from 'react-redux';
+import { storePass, storeEmail} from '../store/userSlice';
 
 export const HomeScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
+    
     const action = "Home"
+    const dispatch = useDispatch();
+    const clipEmail = useSelector((state) => state.user.email);
+    const clipPass = useSelector((state) => state.user.password);
+
+    useEffect(() => {
+        if (clipEmail && clipPass) {
+          setEmail(clipEmail);
+          setPassword(clipPass);
+        }
+      }, []);
 
     // ログイン処理
     const handleLogin = () => {
+        dispatch(storeEmail(email));
+        dispatch(storePass(password));
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 console.log('User signed in!');
-                navigation.navigate('AccuntTab');
+                // navigation.navigate('AccuntTab');
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -37,7 +51,7 @@ export const HomeScreen = ({ navigation }) => {
                 }
             });
     }
-
+// console.log(clipEmail);
     return (
         <View style={styles.container}>
             <Ionicons name="beer" size={80} style={styles.icon} />
@@ -56,13 +70,13 @@ export const HomeScreen = ({ navigation }) => {
             />
 
             <ButtunPrompt
+                action="実験"
+                onPress={testTest}
+            />
+            <ButtunPrompt
                 action="ログインする"
                 onPress={handleLogin}
             />
-            {/* <ButtunPrompt
-                action="ログイン"
-                onPress={() => navigation.navigate('Login')}
-            /> */}
             <View style={styles.signupContainer}>
                 <Text style={styles.signupText}>アカウントを持ってない方はこちら</Text>
                 <ButtunPrompt

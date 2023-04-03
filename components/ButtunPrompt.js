@@ -14,7 +14,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 export const ButtunPrompt = (props) => {
   let isPrimary = false;
-  if (props.action === "新規作成" || props.action === "フォロー申請一覧" || props.action === "始める" ){
+  if (props.action === "新規作成" || props.action === "友達一覧" || props.action === "始める" ){
     isPrimary= true;
   }
 

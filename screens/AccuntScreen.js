@@ -72,9 +72,26 @@ export const AccuntScreen = ({ navigation }) => {
             </TouchableOpacity>
             <Text style={styles.name}>{loginUsersData[0]?.displayName}</Text>
             {/* <QRCodeGenerator userId={uid} /> */}
-            <QRCode value={loginUsersData[0]?.user_id?.toString()} size={200} />
+            <View style={styles.qrCode}>
+
+            <QRCode value={loginUsersData[0]?.user_id?.toString()} size={200} style={styles.qrCode}/>
+            </View>
+                <ButtunPrompt
+                    action="QR読み取り"
+                    onPress={() => navigation.navigate('QRCode')}
+                />
             </View>
 
+            <View style={styles.fliendContainer}>
+                <ButtunPrompt
+                    action="友達一覧"
+                    onPress={handleFollowRequest}
+                />
+                <ButtunPrompt
+                    action="フォロー申請一覧"
+                    onPress={handleFollowRequest}
+                />
+            </View>
 
             <View style={styles.idContainer}>
             <TextInput
@@ -89,14 +106,6 @@ export const AccuntScreen = ({ navigation }) => {
              </View>
 
 
-            <ButtunPrompt
-                action="QR読み取り"
-                onPress={() => navigation.navigate('QRCode')}
-            />
-            <ButtunPrompt
-                action="フォロー申請一覧"
-                onPress={handleFollowRequest}
-            />
 
             <View style={styles.anatherContainer}>
                 <ButtunPrompt
@@ -148,6 +157,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
         fontSize: 16,
         fontWeight: '600',
+        marginBottom: 12,
     },
     email: {
         marginTop: 8,
@@ -204,5 +214,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: '#F8F8F8',
     },
+    qrCode: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 12,
+    },
+    fliendContainer: {
+        marginBottom: 36,
+    }
 });
 
