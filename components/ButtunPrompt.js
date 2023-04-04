@@ -14,8 +14,12 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 export const ButtunPrompt = (props) => {
   let isPrimary = false;
+  let isDispach = false;
   if (props.action === "新規作成" || props.action === "友達一覧" || props.action === "始める" ){
     isPrimary= true;
+  }
+  if (props.action === "５秒でわかる使い方" || props.action === "フォロー解除"){
+    isDispach= true;
   }
 
   return (
@@ -24,7 +28,7 @@ export const ButtunPrompt = (props) => {
         style={[
           styles.loginButton,
           isPrimary ? { backgroundColor: '#EB6383' } : null,
-          props.action === "５秒でわかる使い方" ? { backgroundColor: '#BDBDBD' } : null
+          isDispach ? { backgroundColor: '#BDBDBD' } : null,
         ]}
         onPress={props.onPress}
       >

@@ -1,17 +1,19 @@
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
-import { db, auth, getFolloweredUsersData } from '../lib/firebase'
+import { db, auth, getFolloweredUsersData, deleteFollow } from '../lib/firebase'
 import { doc, setDoc, collection, updateDoc, Timestamp, arrayUnion, getDoc } from "firebase/firestore";
 import React, { useEffect, useState, useRef } from 'react';
 import { async } from '@firebase/util';
+import { ButtunPrompt } from '../components/ButtunPrompt'
 
 export const UserScreen = ({ route }) => {
     const { user } = route.params;
     const [isFollowed, setIsFollowed] = useState(false);
+    const uid = auth.currentUser.uid;
 
     //フォローの確認
     useEffect(() => {
         const isFollowedConfirmation = async () => {
-            const followedarray =  await getFolloweredUsersData();
+            const followedarray = await getFolloweredUsersData();
             if (followedarray.some(innerArray => innerArray.includes(user.user_id))) {
                 setIsFollowed(true);
             }
@@ -21,11 +23,10 @@ export const UserScreen = ({ route }) => {
 
     // フォロー申請処理
     const handleFollow = async () => {
-        const uid = auth.currentUser.uid;
         const followDocRef = doc(db, "follow", uid);
         const followDoc = await getDoc(followDocRef);
         if (!followDoc.exists()) {
-          await setDoc(followDocRef, {});
+            await setDoc(followDocRef, {});
         }
         //フォローTBL登録
         const data = {
@@ -37,24 +38,36 @@ export const UserScreen = ({ route }) => {
         await updateDoc(followDocRef, data);
         setIsFollowed(true)
     };
+    
+    const handleFollowCancel = async () => {
+        await deleteFollow(uid, user.user_id);
+        setIsFollowed(false)
+    }
 
     return (
         <View style={styles.container}>
             <TouchableOpacity>
-            {user?.imageUrl ? (
+                {user?.imageUrl ? (
                     <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
                 ) : (
-                        
-                        <Image source={require('../image/NoneImage.png')} style={styles.avatar} />
+
+                    <Image source={require('../image/NoneImage.png')} style={styles.avatar} />
                 )}
                 {/* <Image source={{ uri: user.imageUrl }} style={styles.avatar} /> */}
             </TouchableOpacity>
             <Text style={styles.name}>{user.displayName}</Text>
 
             {isFollowed ? (
-                <TouchableOpacity style={styles.followedButton} >
-                    <Text style={styles.ButtonText}>フォローしてるで</Text>
-                </TouchableOpacity>
+                <View style={styles.subContainer}>
+                    <ButtunPrompt
+                        action="フォローしてるで"
+                        onPress={() => {}}
+                    />
+                    <ButtunPrompt
+                        action="フォロー解除"
+                        onPress={handleFollowCancel}
+                    />
+                </View>
             ) : (
                 <TouchableOpacity style={styles.followButton} onPress={handleFollow} >
                     <Text style={styles.ButtonText}>フォローする</Text>
@@ -119,4 +132,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
+    subContainer :{
+        alignItems: 'center',
+    }
 });

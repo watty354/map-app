@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { Bubble, GiftedChat, InputToolbar} from 'react-native-gifted-chat';
+import React, { useState, useEffect } from 'react'
+import { Bubble, GiftedChat} from 'react-native-gifted-chat';
 import { doc, collection, onSnapshot, arrayUnion, query, orderBy, setDoc, getDoc, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
-import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native';
+import { View, } from 'react-native';
 
 
 import { db, auth } from '../lib/firebase';

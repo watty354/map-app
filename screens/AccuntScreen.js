@@ -1,17 +1,11 @@
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged, setPersistence, browserSessionPersistence } from 'firebase/auth';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button, ScrollView } from 'react-native';
 import { db, getLoginUsersData, getSearchName, auth, imageStore, getFollowedData, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import QRCode from 'react-native-qrcode-svg';
-import { QRCodeGenerator } from '../components/QRCodeGenerator'
-import { async } from '@firebase/util';
 
 export const AccuntScreen = ({ navigation }) => {
-    const [userId, setUserId] = useState('');
-    const [isFollowRequested, setIsFollowRequested] = useState(false);
     const [loginUsersData, setLoginUsersData] = useState([]);
     const [userName, setName] = useState('');
     const action = "Accunt";

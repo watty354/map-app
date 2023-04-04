@@ -21,10 +21,10 @@ export const UsageScreen = ({ route, navigation }) => {
 
       {action === 'Home' && (
         <View>
-          <ButtunPrompt
+          {/* <ButtunPrompt
             action="ログイン"
             onPress={() => navigation.navigate('Login')}
-          />
+          /> */}
           <ButtunPrompt
             action="新規作成"
             onPress={() => navigation.navigate('Register')}

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { query, collection, doc, updateDoc, where, getDocs, Timestamp } from "firebase/firestore";
 import { db, auth, handleUploadPhoto } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getExtention } from "../lib/file";
+
 
 export const ProfileScreen = ({navigation}) => {
   const [name, setName] = useState('');
