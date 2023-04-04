@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { onAuthStateChanged, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button, ScrollView } from 'react-native';
-import { db, getLoginUsersData, getSearchName, auth, imageStore, getFollowedData } from '../lib/firebase'
+import { db, getLoginUsersData, getSearchName, auth, imageStore, getFollowedData, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import QRCode from 'react-native-qrcode-svg';
 import { QRCodeGenerator } from '../components/QRCodeGenerator'
+import { async } from '@firebase/util';
 
 export const AccuntScreen = ({ navigation }) => {
     const [userId, setUserId] = useState('');
@@ -14,7 +15,6 @@ export const AccuntScreen = ({ navigation }) => {
     const [loginUsersData, setLoginUsersData] = useState([]);
     const [userName, setName] = useState('');
     const action = "Accunt";
-    const uid = 'my-user-id';
 
     //ログインしてるユーザを取得
     useEffect(() => {
@@ -25,14 +25,25 @@ export const AccuntScreen = ({ navigation }) => {
         fetchLoginUsersData();
     }, []);
 
-    // ユーザーIDの変更時に呼ばれるハンドラー
-    const handleUserIdChange = (event) => {
-        setUserId(event.target.value);
+    // 友達（相互フォロー）リストへ遷移
+    const handleFrienfList = async() => {
+        const matchingIds = await getMatchingIds();
+        const user = await getUseresData(matchingIds);
+        navigation.navigate('List', { user: user });
     };
 
     // フォロー申請画面に遷移するハンドラー
     const handleFollowRequest = async () => {
-        const user = await getFollowedData();
+        // フォローされた人
+        const followedUser = await getFollowedId();
+        // フォローした人
+        const originalFollowIds = await getFolloweredUsersData();
+        const followIds = originalFollowIds.flat();
+
+        // フォローした人は除く
+        const userIds = followedUser.filter(userId => !followIds.includes(userId));
+        const user = await getUseresData(userIds);
+
         navigation.navigate('List', { user: user });
     };
 
@@ -85,7 +96,7 @@ export const AccuntScreen = ({ navigation }) => {
             <View style={styles.fliendContainer}>
                 <ButtunPrompt
                     action="友達一覧"
-                    onPress={handleFollowRequest}
+                    onPress={handleFrienfList}
                 />
                 <ButtunPrompt
                     action="フォロー申請一覧"

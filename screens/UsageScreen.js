@@ -2,22 +2,23 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 
-export const UsageScreen = ({route, navigation}) => {
+export const UsageScreen = ({ route, navigation }) => {
   const { action } = route.params;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>5秒でわかる使い方</Text>
       <View style={styles.listItem}>
-        <Text style={styles.listTitle}>1. ボタンを押すと20分間相互フォロー者のみに位置が共有されます！（20分間たつと共有が終わります！）</Text>
-        <Image
-          source={require('../image/Sample.png')}
-          style={styles.image}
-        />
+        <Text style={styles.listTitle}>1. ボタンを押すと相互フォロー者のみに位置が共有されます！</Text>
+        <Text style={styles.listTitle}>2. 停止ボタンを押すと位置共有が停止されます！</Text>
+        <View style={styles.row}>
+          <Image source={require('../image/Sample.png')} style={styles.image} />
+          <Image source={require('../image/Sample2.png')} style={styles.image} />
+        </View>
       </View>
       <View style={styles.listItem}>
-        <Text style={styles.listTitle}>2. 誰かと飲みたいなと思った時に押そう！</Text>
+        <Text style={styles.listTitle}>誰かと飲みたいなと思った時に押そう！</Text>
       </View>
-  
+
       {action === 'Home' && (
         <View>
           <ButtunPrompt
@@ -59,13 +60,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', // 太字
   },
   image: {
-    width: 300, // 画像の幅
-    height: 300, // 画像の高さ
-    resizeMode: 'contain', // 画像を縮小せずにフィット
+    width: 150, // 画像の幅
+    height: 200, // 画像の高さ
+    // resizeMode: 'contain', // 画像を縮小せずにフィット
     marginTop: 12, // 余白
-    alignSelf: 'center', // 中央揃え
-    // borderColor: '#FA9191',
-    // borderWidth: 2, 
-    // borderRadius: 32,
-  }
+    // alignSelf: 'center', // 中央揃え
+    borderColor: '#FA9191',
+    borderWidth: 2, 
+    borderRadius: 32,
+    marginHorizontal: 8,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
 });

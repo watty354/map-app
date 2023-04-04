@@ -70,10 +70,6 @@ export const HomeScreen = ({ navigation }) => {
             />
 
             <ButtunPrompt
-                action="実験"
-                onPress={testTest}
-            />
-            <ButtunPrompt
                 action="ログインする"
                 onPress={handleLogin}
             />
