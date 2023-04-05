@@ -6,7 +6,7 @@ import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native';
  * imageUrl: 画像URL(strimg)
  * displayName: タイトル(strimg)
  * onPress: タップされた時のイベント
- * 
+ * badge: バッジ(boolean)
  * } props 
  * @returns 
  */
@@ -30,6 +30,9 @@ export const ListItem = (props) => {
             <Text numberOfLines={3} style={styles.displayName}>
               {props.displayName}</Text>
           </View>
+              {props.badge && 
+              <View style={styles.badge} />
+              }
       </TouchableOpacity>
     );
   }
@@ -59,6 +62,15 @@ export const ListItem = (props) => {
     subText: {
       fontSize: 14,
       color: "gray",
-    }
+    }, 
+    badge: {
+      width: 12,
+      height: 12,
+      borderRadius: 8,
+      backgroundColor: 'red',
+      position: 'absolute',
+      left: 55,
+      top: 20,
+    },
   
   });

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useRoute } from 'react';
+// import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MapScreen } from './screens/Map';
@@ -21,10 +22,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { store, persistor } from './store';
 import { Provider } from 'react-redux'
 import { PersistGate } from "redux-persist/integration/react";
-
+import { View, Image, Text } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
 const screenOption = ({ route }) => ({
   tabBarIcon: ({ color, size, focused }) => {
     let iconName;
@@ -44,12 +46,18 @@ const screenOption = ({ route }) => ({
   },
 });
 
+const headerOptions = {
+  headerStyle: { backgroundColor: '#EB6383' },
+  headerTitleStyle: { color: '#fff' },
+  headerTintColor: '#fff',
+};
+
 
 const HomeStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Usage" component={UsageScreen} options={{ title: "使い方" }} />
+      <Stack.Screen name="Usage" component={UsageScreen} options={{...headerOptions, title: '使い方'}} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -74,19 +82,43 @@ const AccuntStack = () => {
     <Stack.Navigator>
       <Stack.Screen name="Accunt" component={AccuntScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Map" component={MapScreen} />
-      <Stack.Screen name="List" component={ListScreen} />
-      <Stack.Screen name="User" component={UserScreen} />
-      <Stack.Screen name="Chat" component={ChatScreen} />
-      <Stack.Screen name="QRCode" component={QRCodeScannerScreen} />
-      <Stack.Screen name="Usage" component={UsageScreen} options={{ title: "使い方" }} />
+      <Stack.Screen name="List" component={ListScreen} options={headerOptions}/>
+      <Stack.Screen name="User" component={UserScreen} options={{...headerOptions, title: 'フォロー'}}/>
+      <Stack.Screen name="Chat" component={ChatScreen} options={headerOptions}/>
+      <Stack.Screen name="QRCode" component={QRCodeScannerScreen} options={headerOptions}/>
+      <Stack.Screen name="Usage" component={UsageScreen} options={{...headerOptions, title: '使い方'}}/>
     </Stack.Navigator>
   );
 }
+
+const HeaderTitleWithAvatar = ({ route }) => {
+  const { user } = route.params;
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Image
+        style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+        source={{ uri: user.imageUrl }}
+      />
+      <Text style={{ fontWeight: 'bold', fontSize: 18, color: '#fff' }}>{user.displayName}</Text>
+    </View>
+  );
+};
+
 const ChatStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="List" component={ChatListScreen} />
-      <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Screen name="List" component={ChatListScreen} options={{ headerStyle: { backgroundColor: '#EB6383' }, headerTitleStyle: { color: '#fff' }, }} />
+      <Stack.Screen name="Chat" component={ChatScreen}
+        options={({ route }) => ({
+          // title: route.params.user.imageUrl,
+          // headerTitle: title(route),
+          headerTitle: (props) => <HeaderTitleWithAvatar {...props} route={route} />,
+          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: '#EB6383' },
+          headerTitleStyle: { color: '#fff' },
+        })} />
     </Stack.Navigator>
   );
 }

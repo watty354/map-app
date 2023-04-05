@@ -11,15 +11,15 @@ const functions = require("firebase-functions");
 // const admin = require("firebase-admin");
 // admin.initializeApp();
 
-// exports.onDisplayMapChanged = functions.firestore
-//     .document("users/{userId}")
-//     .onUpdate((change, context) => {
-//     //   const userId = context.auth.uid;
-//       const displayMap = change.after.data().displayMap;
-//       if (displayMap) {
-//         setTimeout(() => {
-//           change.after.ref.update({displayMap: false});
-//         }, 5000);
-//       }
-//       return null;
-//     });
+exports.onDisplayMapChanged = functions.firestore
+    .document("users/{userId}")
+    .onUpdate((change, context) => {
+    //   const userId = context.auth.uid;
+      const displayMap = change.after.data().displayMap;
+      if (displayMap) {
+        setTimeout(() => {
+          change.after.ref.update({displayMap: false});
+        }, 7200000);
+      }
+      return null;
+    });

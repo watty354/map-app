@@ -1,14 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 
 export const UsageScreen = ({ route, navigation }) => {
   const { action } = route.params;
   return (
+    // <ScrollView>
     <View style={styles.container}>
       <Text style={styles.title}>5秒でわかる使い方</Text>
       <View style={styles.listItem}>
-        <Text style={styles.listTitle}>1. ボタンを押すと相互フォロー者のみに位置が共有されます！</Text>
+        <Text style={styles.listTitle}>1. ボタンを押すと相互フォロー者のみに位置が<Text style={styles.pri}>共有</Text>されます</Text>
+        {/* <Text style={styles.listTitle}>位置が共有されます！</Text> */}
         <Text style={styles.listTitle}>2. 停止ボタンを押すと位置共有が停止されます！</Text>
         <View style={styles.row}>
           <Image source={require('../image/Sample.png')} style={styles.image} />
@@ -16,7 +18,7 @@ export const UsageScreen = ({ route, navigation }) => {
         </View>
       </View>
       <View style={styles.listItem}>
-        <Text style={styles.listTitle}>誰かと飲みたいなと思った時に押そう！</Text>
+        <Text style={styles.subTitle}>誰かと飲みたいなと思った時に押そう！</Text>
       </View>
 
       {action === 'Home' && (
@@ -32,7 +34,12 @@ export const UsageScreen = ({ route, navigation }) => {
           />
         </View>
       )}
+          <View style={styles.devItem}>
+            <Text style={styles.text}>開発者追記</Text>
+            <Text style={styles.devText}>改善点や使う人が多くなればアプデしていきますので、様々なご意見お待ちしています。</Text>
+          </View>
     </View>
+    // </ScrollView>
   );
 }
 
@@ -43,17 +50,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16, // 左右のpadding
-    paddingVertical: 24, // 上下のpadding
+    paddingVertical: 16, // 上下のpadding
   },
   title: {
     fontSize: 32, // フォントサイズ
     fontWeight: 'bold', // 太字
     marginBottom: 24, // タイトルの下の余白
+    color: '#EB6383'
   },
   listItem: {
     marginBottom: 12, // リストのアイテムごとの余白
   },
   listTitle: {
+    fontSize: 16, // フォントサイズ
+    lineHeight: 24, // 行間
+    textAlign: 'left', // 中央揃え
+    fontWeight: 'bold', // 太字
+  },
+  subTitle: {
     fontSize: 16, // フォントサイズ
     lineHeight: 24, // 行間
     textAlign: 'center', // 中央揃え
@@ -74,4 +88,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  devText: {
+    fontSize: 16, // フォントサイズ
+    lineHeight: 24, // 行間
+    textAlign: 'left', // 中央揃え
+    fontWeight: 'bold', // 太字
+  },
+  devItem: {
+    paddingHorizontal: 16, // 左右のpadding
+    paddingVertical: 24, // 上下のpadding
+    position:'absolute',
+    bottom:24,
+  },
+  pri: {
+    color: '#EB6383'
+  }
 });

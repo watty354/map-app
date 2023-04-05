@@ -11,7 +11,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { async } from '@firebase/util';
 // import BackgroundTask from 'react-native-background-task';
 
-
 export const MapScreen = ({ route, navigation }) => {
   const [usersData, setUsersData] = useState([]);
   const [loginUsersData, setLoginUsersData] = useState([]);
@@ -54,7 +53,7 @@ export const MapScreen = ({ route, navigation }) => {
             ...doc.data(),
           }));
           const matchingUsers = data.filter(user => matchingIds.includes(user.user_id));
-          console.log(matchingUsers);
+          // console.log(matchingUsers);
           setUsersData(matchingUsers);
         }
       );
@@ -158,7 +157,7 @@ export const MapScreen = ({ route, navigation }) => {
                 latitude: mapRegion.latitude,
                 longitude: mapRegion.longitude,
               }}
-              title={loginUsersData[0].displayName}
+              // title={loginUsersData[0].displayName}
             >
               {loginUsersData[0]?.imageUrl ? (
                 <View style={styles.customMarker}>

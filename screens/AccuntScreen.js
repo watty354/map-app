@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button, ScrollView } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button, ScrollView, Alert } from 'react-native';
 import { db, getLoginUsersData, getSearchName, auth, imageStore, getFollowedData, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
@@ -18,6 +18,10 @@ export const AccuntScreen = ({ navigation }) => {
         };
         fetchLoginUsersData();
     }, []);
+
+    if(loginUsersData.length > 0 && !loginUsersData[0].imageUrl){
+        Alert.alert('写真を設定して下さい');
+      }
 
     // 友達（相互フォロー）リストへ遷移
     const handleFrienfList = async() => {
@@ -54,6 +58,9 @@ export const AccuntScreen = ({ navigation }) => {
 
     const onPickImage = async () => {
         const uri = await pickImage();
+        if (!uri) {
+            return;
+        }
         const beforeUri = loginUsersData[0]?.imageUrl ? loginUsersData[0].imageUrl : null;
         await imageStore(beforeUri, uri);
         const data = await getLoginUsersData();
@@ -131,6 +138,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 20,
         marginTop: 100,
+        marginBottom: 150,
     },
     subContainer: {
         alignItems: 'center',
