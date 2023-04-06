@@ -48,7 +48,7 @@ export const RegisterScreen = ({ navigation }) => {
           user_id: uid,
           country: "",
           email: email,
-          passord: password,
+          password: password,
           displayName: name,
           displayMap: false,
           createdAt: Timestamp.now(),
