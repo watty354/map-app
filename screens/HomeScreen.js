@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert, TextInput } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { LoginScreen } from '../screens/RegisterScreen'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { reload } from 'firebase/auth';
-import { getAuth, signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from '../lib/firebase'
 import { useDispatch, useSelector } from 'react-redux';
 import { storePass, storeEmail} from '../store/userSlice';
@@ -54,7 +54,8 @@ export const HomeScreen = ({ navigation }) => {
 // console.log(clipEmail);
     return (
         <View style={styles.container}>
-            <Ionicons name="beer" size={80} style={styles.icon} />
+            {/* <Ionicons name="beer" size={80} style={styles.icon} /> */}
+            <Image source={require('../image/homeLogo.png')} style={styles.logo} />
             <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -130,6 +131,14 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 32,
     },
+    logo: {
+        // position:'absolute',
+        // top: 150,
+        marginBottom: 25,
+        width: 300, // 画像の幅
+        height: 150,
+        resizeMode: 'contain', // 画像を縮小せずにフィット
+      }
 });

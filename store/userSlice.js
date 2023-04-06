@@ -3,8 +3,11 @@ import { createSlice } from '@reduxjs/toolkit'
 //初期値
 const initialState  = {
     clips: [],
+    userId: '',
     emial: '',
-    password: ''
+    password: '',
+    displayName: '',
+    displayImage: '',
   }
 
 // 処理（Action）
@@ -12,17 +15,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-		//追加
-    addClip: (state, action) => {
-        const newClip = action.payload;
-        state.clips.push(newClip);
-    },
-		//削除
-    deleteClip: (state, action) => {
-        const deletingClip = action.payload;
-        const currentClip = state.clips;
-        const filteredClips = currentClip.filter((clip) => clip.url !== deletingClip.url);
-        state.clips = filteredClips;
+    storeUserId: (state, action) => {
+        const userId = action.payload;
+        state.userId = userId;
     },
     storeEmail: (state, action) => {
         const email = action.payload;
@@ -31,13 +26,21 @@ export const userSlice = createSlice({
     storePass: (state, action) => {
         const pass = action.payload;
         state.password = pass;
+    },
+    storeName: (state, action) => {
+        const name = action.payload;
+        state.displayName = name;
+    },
+    storeImage: (state, action) => {
+        const image = action.payload;
+        state.displayImage = image;
     }
 
   },
 })
 
 // 処理（Action）を定義
-export const { addClip, deleteClip, storeEmail, storePass} = userSlice.actions
+export const { storeUserId, storeName, storeImage, storeEmail, storePass} = userSlice.actions
 
 // 名前のやつでね〜
 export default userSlice.reducer

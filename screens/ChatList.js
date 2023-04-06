@@ -28,8 +28,8 @@ export const ChatListScreen = ({ navigation }) => {
       // データの更新処理
       const uid = auth.currentUser.uid;
       const data = await getChatUsersData(uid);
-      setUsersData(data);
       newSendcheck();
+      setUsersData(data);
     } catch (error) {
       console.error(error);
     } finally {

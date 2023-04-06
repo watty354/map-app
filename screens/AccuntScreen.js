@@ -1,30 +1,60 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Button, ScrollView, Alert } from 'react-native';
-import { db, getLoginUsersData, getSearchName, auth, imageStore, getFollowedData, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId } from '../lib/firebase'
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { db, getLoginUsersData, getSearchName, auth, imageStore, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import QRCode from 'react-native-qrcode-svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeUserId, storeImage, storeName } from '../store/userSlice';
 
 export const AccuntScreen = ({ navigation }) => {
     const [loginUsersData, setLoginUsersData] = useState([]);
+    const [loginUserName, setLoginUserName] = useState("");
+    const [loginUserImage, setLoginUserImage] = useState("");
+    const [loginUserId, setLoginUserId] = useState("");
     const [userName, setName] = useState('');
     const action = "Accunt";
+
+    const dispatch = useDispatch();
+    const clipUserId = useSelector((state) => state.user.userId);
+    const clipName = useSelector((state) => state.user.displayName);
+    const clipImage = useSelector((state) => state.user.displayImage);
 
     //ログインしてるユーザを取得
     useEffect(() => {
         const fetchLoginUsersData = async () => {
             const data = await getLoginUsersData();
-            setLoginUsersData(data)
+            console.log("実行されてないよね！");
+            dispatch(storeUserId(data.user_id));
+            dispatch(storeName(data.displayName));
+            dispatch(storeImage(data.imageUrl));
+            setLoginUserId(data.user_id);
+            setLoginUserName(data.displayName);
+            setLoginUserImage(data.imageUrl);
+            setLoginUsersData(data);
+            if (!data.imageUrl){
+                Alert.alert('写真を設定して下さい');
+            }
         };
-        fetchLoginUsersData();
+        if (clipUserId && clipName && clipImage) {
+            setLoginUserId(clipUserId);
+            setLoginUserName(clipName);
+            setLoginUserImage(clipImage);
+        } else {
+            fetchLoginUsersData();
+        }
     }, []);
 
-    if(loginUsersData.length > 0 && !loginUsersData[0].imageUrl){
-        Alert.alert('写真を設定して下さい');
-      }
+    // useEffect(() => {
+    //     if (loginUsersImage === '') {
+    //         console.log(loginUsersImage);
+    //         Alert.alert('写真を設定して下さい');
+    //     }
+    // }, [loginUsersImage]);
+
 
     // 友達（相互フォロー）リストへ遷移
-    const handleFrienfList = async() => {
+    const handleFrienfList = async () => {
         const matchingIds = await getMatchingIds();
         const user = await getUseresData(matchingIds);
         navigation.navigate('List', { user: user });
@@ -52,80 +82,82 @@ export const AccuntScreen = ({ navigation }) => {
     }
 
     // ログインしていない場合はログインページにリダイレクト
-    if (!loginUsersData) {
-        navigation.navigate('Home');
-    }
+    // if (!loginUsersData) {
+    //     navigation.navigate('Home');
+    // }
 
     const onPickImage = async () => {
         const uri = await pickImage();
         if (!uri) {
             return;
         }
-        const beforeUri = loginUsersData[0]?.imageUrl ? loginUsersData[0].imageUrl : null;
+        const beforeUri = loginUserImage ? loginUserImage : null;
         await imageStore(beforeUri, uri);
-        const data = await getLoginUsersData();
-        setLoginUsersData(data)
+        // const data = await getLoginUsersData();
+        // setLoginUsersData(data)
+        dispatch(storeImage(uri));
+        setLoginUserImage(uri);
 
     };
 
     return (
         <ScrollView>
 
-        <View style={styles.container}>
-            <View style={styles.subContainer}>
-            <TouchableOpacity onPress={onPickImage}>
-                {loginUsersData[0]?.imageUrl ? (
-                    <Image source={{ uri: loginUsersData[0].imageUrl }} style={styles.avatar} />
-                ) : (
-                    <View style={styles.avatarPlaceholder}>
-                        <Text style={styles.avatarPlaceholderText}>写真を選択</Text>
+            <View style={styles.container}>
+                <View style={styles.subContainer}>
+                    <TouchableOpacity onPress={onPickImage}>
+                        {loginUserImage ? (
+                            <Image source={{ uri: loginUserImage }} style={styles.avatar} />
+                        ) : (
+                            <View style={styles.avatarPlaceholder}>
+                                <Text style={styles.avatarPlaceholderText}>写真を選択</Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                    <Text style={styles.name}>{loginUserName}</Text>
+                    {/* <QRCodeGenerator userId={uid} /> */}
+                    <View style={styles.qrCode}>
+
+                    {loginUserId && <QRCode value={loginUserId} size={200} style={styles.qrCode} />}
                     </View>
-                )}
-            </TouchableOpacity>
-            <Text style={styles.name}>{loginUsersData[0]?.displayName}</Text>
-            {/* <QRCodeGenerator userId={uid} /> */}
-            <View style={styles.qrCode}>
+                    <ButtunPrompt
+                        action="QR読み取り"
+                        onPress={() => navigation.navigate('QRCode')}
+                    />
+                </View>
 
-            <QRCode value={loginUsersData[0]?.user_id?.toString()} size={200} style={styles.qrCode}/>
+                <View style={styles.fliendContainer}>
+                    <ButtunPrompt
+                        action="友達一覧"
+                        onPress={handleFrienfList}
+                    />
+                    <ButtunPrompt
+                        action="フォロー申請一覧"
+                        onPress={handleFollowRequest}
+                    />
+                </View>
+
+                <View style={styles.idContainer}>
+                    <TextInput
+                        value={userName}
+                        onChangeText={(value) => setName(value)}
+                        style={styles.input}
+                    />
+                    <ButtunPrompt
+                        action="名前検索"
+                        onPress={handleSearchName}
+                    />
+                </View>
+
+
+
+                <View style={styles.anatherContainer}>
+                    <ButtunPrompt
+                        action="５秒でわかる使い方"
+                        onPress={() => navigation.navigate('Usage', { action: action })}
+                    />
+                </View>
             </View>
-                <ButtunPrompt
-                    action="QR読み取り"
-                    onPress={() => navigation.navigate('QRCode')}
-                />
-            </View>
-
-            <View style={styles.fliendContainer}>
-                <ButtunPrompt
-                    action="友達一覧"
-                    onPress={handleFrienfList}
-                />
-                <ButtunPrompt
-                    action="フォロー申請一覧"
-                    onPress={handleFollowRequest}
-                />
-            </View>
-
-            <View style={styles.idContainer}>
-            <TextInput
-                value={userName}
-                onChangeText={(value) => setName(value)}
-                style={styles.input}
-            />
-            <ButtunPrompt
-                action="名前検索"
-                onPress={handleSearchName}
-            />
-             </View>
-
-
-
-            <View style={styles.anatherContainer}>
-                <ButtunPrompt
-                    action="５秒でわかる使い方"
-                    onPress={() => navigation.navigate('Usage', {action : action})}
-                />
-            </View>
-        </View>
         </ScrollView>
 
     );

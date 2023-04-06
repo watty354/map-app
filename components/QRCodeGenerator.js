@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { View, Text } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -11,7 +11,7 @@ export const QRCodeGenerator = ({ userId }) => {
   }
 
   // コンポーネントマウント時にQRコードを生成する
-  React.useEffect(() => {
+  useEffect(() => {
     generateQRCode(userId);
   }, []);
 

@@ -7,6 +7,7 @@ export const UsageScreen = ({ route, navigation }) => {
   return (
     // <ScrollView>
     <View style={styles.container}>
+      <Image source={require('../image/logo.png')} style={styles.logo} />
       <Text style={styles.title}>5秒でわかる使い方</Text>
       <View style={styles.listItem}>
         <Text style={styles.listTitle}>1. ボタンを押すと相互フォロー者のみに位置が<Text style={styles.pri}>共有</Text>されます</Text>
@@ -102,5 +103,12 @@ const styles = StyleSheet.create({
   },
   pri: {
     color: '#EB6383'
+  },
+  logo: {
+    position:'absolute',
+    top:42,
+    width: 300, // 画像の幅
+    height: 70,
+    resizeMode: 'contain', // 画像を縮小せずにフィット
   }
 });

@@ -5,20 +5,31 @@ import { View, } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { getUserData } from '../lib/firebase';
 import { db, auth } from '../lib/firebase';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeImage } from '../store/userSlice';
 
 export const ChatScreen = ({ route }) => {
   const { user } = route.params;
   const [messages, setMessages] = useState([]);
   const [loginUser, setLoginUser] = useState([]);
+  const [loginUserImage, setLoginUserImage] = useState("");
   const chatId = getChatId(user.user_id, auth.currentUser.uid);
   const chatDocRef = doc(db, 'chats', chatId);
+
+  const dispatch = useDispatch();
+  const clipImage = useSelector((state) => state.user.displayImage);
 
   useEffect(() => {
     async function fetchData() {
       const userData = await getUserData(auth.currentUser.uid);
       setLoginUser(userData);
+      dispatch(storeImage(userData.imageUrl));
     }
-    fetchData();
+    if (clipImage) {
+      setLoginUserImage(clipImage);
+    } else {
+      fetchData();
+    }
   }, []);
 
   useEffect(() => {
@@ -104,10 +115,10 @@ export const ChatScreen = ({ route }) => {
     return (
       <Send {...props}>
         <View>
-        <Ionicons 
-        name="send-outline" 
-        size={32} color='#EB6383' 
-        style={{marginBottom:5, marginRight: 5}}/>
+          <Ionicons
+            name="send-outline"
+            size={32} color='#EB6383'
+            style={{ marginBottom: 5, marginRight: 5 }} />
         </View>
       </Send>
     );
@@ -122,7 +133,7 @@ export const ChatScreen = ({ route }) => {
         onSend={messages => onSend(messages)}
         user={{
           _id: auth.currentUser.uid,
-          avatar: loginUser.imageUrl
+          avatar: loginUserImage
         }}
         renderBubble={renderBubble}
         // renderAvatar={false} 

@@ -8,7 +8,7 @@ import { UserContext } from '../contexts/userContexts'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { CheckBox } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
-import { storePass, storeEmail } from '../store/userSlice';
+import { storePass, storeEmail, storeName } from '../store/userSlice';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
@@ -60,6 +60,8 @@ export const RegisterScreen = ({ navigation }) => {
         const dispatch = useDispatch();
         dispatch(storeEmail(email));
         dispatch(storePass(password));
+        dispatch(storeName(name));
+        dispatch(storeUserId(uid));
         navigation.navigate('AccuntTab');
         // const docRef = addDoc(collection(db, "users"), {
         // })
@@ -70,7 +72,7 @@ export const RegisterScreen = ({ navigation }) => {
 
         if (errorCode === 'auth/invalid-email') {
           Alert.alert('エラー', 'メールアドレスの形式が正しくありません');
-        } else if (errorCode === 'auth/invalid-password') {
+        } else if (errorCode === 'auth/weak-password') {
           Alert.alert('エラー', 'パスワード6文字以上で入力して下さい');
         } else if (errorCode === 'auth/email-already-in-use') {
           Alert.alert('エラー', 'そのユーザーはすでに存在してます');

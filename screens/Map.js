@@ -9,12 +9,20 @@ import { ButtunPrompt } from '../components/ButtunPrompt'
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { async } from '@firebase/util';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeUserId, storeImage, storeName } from '../store/userSlice';
 // import BackgroundTask from 'react-native-background-task';
 
 export const MapScreen = ({ route, navigation }) => {
   const [usersData, setUsersData] = useState([]);
   const [loginUsersData, setLoginUsersData] = useState([]);
+  const [loginUserName, setLoginUserName] = useState("");
+  const [loginUserImage, setLoginUserImage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const dispatch = useDispatch();
+  const clipName = useSelector((state) => state.user.displayName);
+  const clipImage = useSelector((state) => state.user.displayImage);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -36,9 +44,19 @@ export const MapScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchLoginUsersData = async () => {
       const data = await getLoginUsersData();
+      console.log(data);
       setLoginUsersData(data);
+      dispatch(storeName(data.displayName));
+      dispatch(storeImage(data.imageUrl));
+      setLoginUserName(data.displayName);
+      setLoginUserImage(data.imageUrl);
     };
-    fetchLoginUsersData();
+    if (clipName && clipImage) {
+      setLoginUserName(clipName);
+      setLoginUserImage(clipImage);
+    } else {
+      fetchLoginUsersData();
+    }
   }, []);
 
   //リアルタイムDB取得のおまじない
@@ -130,16 +148,16 @@ export const MapScreen = ({ route, navigation }) => {
     setMarkerVisible(false);
     mapDisplayNone();
   }
-    
+
   // // アプリの状態を監視
-  const handleAppStateChange = async(nextAppState) => {
+  const handleAppStateChange = async (nextAppState) => {
     if (nextAppState === 'active') {
       const data = await getLoginUsersData();
-      if (data[0].mapDisplay === false){
+      if (data.mapDisplay === false) {
         setMarkerVisible(false);
         mapDisplayNone();
       }
-    } 
+    }
   }
   // AppStateのリスナーを登録
   AppState.addEventListener('change', handleAppStateChange);
@@ -157,17 +175,20 @@ export const MapScreen = ({ route, navigation }) => {
                 latitude: mapRegion.latitude,
                 longitude: mapRegion.longitude,
               }}
-              // title={loginUsersData[0].displayName}
+            // title={loginUsersData[0].displayName}
             >
-              {loginUsersData[0]?.imageUrl ? (
+              {loginUserImage && loginUserName ? (
                 <View style={styles.customMarker}>
-                  <Text style={styles.markerTitle}>{loginUsersData[0].displayName}</Text>
-                  <Image source={{ uri: loginUsersData[0].imageUrl }} style={styles.markerImage} />
+                  <Text style={styles.markerTitle}>{loginUserName}</Text>
+                  <Image source={{ uri: loginUserImage }} style={styles.markerImage} />
                 </View>
               ) : (
+                <View style={styles.customMarker}>
+                <Text style={styles.markerTitle}>{loginUserName}</Text>
                 <Image
                   source={require('../image/NoneImage.png')}
                   style={styles.markerImage} />
+              </View>
               )}
             </Marker>
           )}
@@ -178,17 +199,17 @@ export const MapScreen = ({ route, navigation }) => {
                 latitude: user.latitude,
                 longitude: user.longitude,
               }}
-              title={user.displayname}
-              description={user.displayName}
+              // title={user.displayname}
+              // description={user.displayName}
               onPress={() => navigation.navigate('Chat', { user: user })}
             >
               <View style={styles.customMarker}>
                 <Text style={styles.markerTitle}>{user.displayName}</Text>
                 {user?.imageUrl ? (
-                    <Image source={{ uri: user.imageUrl }} style={styles.markerImage} />
+                  <Image source={{ uri: user.imageUrl }} style={styles.markerImage} />
                 ) : (
-                        
-                        <Image source={require('../image/NoneImage.png')} style={styles.markerImage} />
+
+                  <Image source={require('../image/NoneImage.png')} style={styles.markerImage} />
                 )}
                 {/* <Image
                   source={{ uri: user.imageUrl }}
@@ -197,9 +218,9 @@ export const MapScreen = ({ route, navigation }) => {
             </Marker>
           ))}
         </MapView>
-        <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
-              <View style={[styles.button, {backgroundColor: markerVisible ? '#BDBDBD' : '#EB6383'}]}>
+              <View style={[styles.button, { backgroundColor: markerVisible ? '#BDBDBD' : '#EB6383' }]}>
                 <Text style={styles.buttonText}>{markerVisible ? '停止' : 'ここおるで〜'}</Text>
                 <Ionicons name={[markerVisible ? "stop-circle-outline" : "beer-outline"]} size={70} style={styles.icon} />
               </View>
