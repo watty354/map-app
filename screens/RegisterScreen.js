@@ -8,7 +8,7 @@ import { UserContext } from '../contexts/userContexts'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { CheckBox } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
-import { storePass, storeEmail, storeName } from '../store/userSlice';
+import { storePass, storeEmail, storeName, storeUserId, storeImage} from '../store/userSlice';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
@@ -18,6 +18,8 @@ export const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [isChecked, setIsChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const dispatch = useDispatch();
 
   //登録
   const handleRegister = async () => {
@@ -57,12 +59,13 @@ export const RegisterScreen = ({ navigation }) => {
         setDoc(doc(db, "users", uid), data);
 
         //reduxに保存
-        const dispatch = useDispatch();
+        
         dispatch(storeEmail(email));
         dispatch(storePass(password));
         dispatch(storeName(name));
+        dispatch(storeImage(''));
         dispatch(storeUserId(uid));
-        navigation.navigate('AccuntTab');
+        // navigation.navigate('AccuntTab');
         // const docRef = addDoc(collection(db, "users"), {
         // })
       })
