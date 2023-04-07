@@ -24,7 +24,6 @@ export const AccuntScreen = ({ navigation }) => {
     useEffect(() => {
         const fetchLoginUsersData = async () => {
             const data = await getLoginUsersData();
-            console.log("実行されてないよね！");
             dispatch(storeUserId(data.user_id));
             dispatch(storeName(data.displayName));
             dispatch(storeImage(data.imageUrl));
@@ -44,14 +43,6 @@ export const AccuntScreen = ({ navigation }) => {
             fetchLoginUsersData();
         }
     }, []);
-
-    // useEffect(() => {
-    //     if (loginUsersImage === '') {
-    //         console.log(loginUsersImage);
-    //         Alert.alert('写真を設定して下さい');
-    //     }
-    // }, [loginUsersImage]);
-
 
     // 友達（相互フォロー）リストへ遷移
     const handleFrienfList = async () => {
@@ -92,11 +83,11 @@ export const AccuntScreen = ({ navigation }) => {
             return;
         }
         const beforeUri = loginUserImage ? loginUserImage : null;
-        await imageStore(beforeUri, uri);
+        const imageurl = await imageStore(beforeUri, uri);
         // const data = await getLoginUsersData();
         // setLoginUsersData(data)
-        dispatch(storeImage(uri));
-        setLoginUserImage(uri);
+        dispatch(storeImage(imageurl));
+        setLoginUserImage(imageurl);
 
     };
 

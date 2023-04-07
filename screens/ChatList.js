@@ -19,8 +19,10 @@ export const ChatListScreen = ({ navigation }) => {
         const data = await getChatUsersData(uid);
         setUsersData(data);
       } 
-    fetchData();
-  }, []);
+      if(isFocused) {
+        fetchData();
+      }
+  }, [isFocused]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -28,11 +30,12 @@ export const ChatListScreen = ({ navigation }) => {
       // データの更新処理
       const uid = auth.currentUser.uid;
       const data = await getChatUsersData(uid);
-      newSendcheck();
+      // newSendcheck();
       setUsersData(data);
     } catch (error) {
       console.error(error);
     } finally {
+      newSendcheck();
       setRefreshing(false);
     }
   };
@@ -92,10 +95,6 @@ export const ChatListScreen = ({ navigation }) => {
         keyExtractor={(item, index) => index.toString()}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
-                 {/* <ButtunPrompt
-                action="実験"
-                onPress={handleLogin}
-            /> */}
       {refreshing && (
         <View style={styles.refreshIndicator}>
           <ActivityIndicator />
@@ -107,7 +106,13 @@ export const ChatListScreen = ({ navigation }) => {
   ) : (
     <View style={styles.noUsersContainer}>
       <Text style={styles.noUsersText}>トーク履歴なし</Text>
+      {refreshing && (
+        <View style={styles.refreshIndicator}>
+          <ActivityIndicator />
+        </View>
+      )}
     </View>
+    
   )}
 </SafeAreaView>
 

@@ -64,14 +64,13 @@ export const MapScreen = ({ route, navigation }) => {
     const fetchData = async () => {
       const matchingIds = await getMatchingIds();
       const unsubscribe = onSnapshot(
-        query(collection(db, 'users'), where('displayMap', '==', true)),
+        query(collection(db, 'users'), where('displayMap', '==', true), where('user_id', 'in', matchingIds),),
         (querySnapshot) => {
           const data = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
           const matchingUsers = data.filter(user => matchingIds.includes(user.user_id));
-          // console.log(matchingUsers);
           setUsersData(matchingUsers);
         }
       );
@@ -162,10 +161,15 @@ export const MapScreen = ({ route, navigation }) => {
   // AppStateのリスナーを登録
   AppState.addEventListener('change', handleAppStateChange);
 
+  const handleReflesh = async() =>{
+    const data = await getMapFollowUsersData();
+    setUsersData(data);
+  }
+
   return (
     <View style={styles.container}>
       {isAuthenticated ? (
-        <><MapView style={styles.map}
+        <><><MapView style={styles.map}
           region={mapRegion}
           provider={PROVIDER_GOOGLE}
         >
@@ -175,7 +179,6 @@ export const MapScreen = ({ route, navigation }) => {
                 latitude: mapRegion.latitude,
                 longitude: mapRegion.longitude,
               }}
-            // title={loginUsersData[0].displayName}
             >
               {loginUserImage && loginUserName ? (
                 <View style={styles.customMarker}>
@@ -184,38 +187,34 @@ export const MapScreen = ({ route, navigation }) => {
                 </View>
               ) : (
                 <View style={styles.customMarker}>
-                <Text style={styles.markerTitle}>{loginUserName}</Text>
-                <Image
-                  source={require('../image/NoneImage.png')}
-                  style={styles.markerImage} />
-              </View>
+                  <Text style={styles.markerTitle}>{loginUserName}</Text>
+                  <Image
+                    source={require('../image/NoneImage.png')}
+                    style={styles.markerImage} />
+                </View>
               )}
             </Marker>
           )}
           {usersData.map((user) => (
-            <Marker
-              key={user.id}
-              coordinate={{
-                latitude: user.latitude,
-                longitude: user.longitude,
-              }}
-              // title={user.displayname}
-              // description={user.displayName}
-              onPress={() => navigation.navigate('Chat', { user: user })}
-            >
-              <View style={styles.customMarker}>
-                <Text style={styles.markerTitle}>{user.displayName}</Text>
-                {user?.imageUrl ? (
-                  <Image source={{ uri: user.imageUrl }} style={styles.markerImage} />
-                ) : (
-
-                  <Image source={require('../image/NoneImage.png')} style={styles.markerImage} />
-                )}
-                {/* <Image
-                  source={{ uri: user.imageUrl }}
-                  style={styles.markerImage} /> */}
-              </View>
-            </Marker>
+            user.displayMap && (
+              <Marker
+                key={user.id}
+                coordinate={{
+                  latitude: user.latitude,
+                  longitude: user.longitude,
+                }}
+                onPress={() => navigation.navigate('ChatTab', { screen: 'Chat', params: { user: user } })}
+              >
+                <View style={styles.customMarker}>
+                  <Text style={styles.markerTitle}>{user.displayName}</Text>
+                  {user?.imageUrl ? (
+                    <Image source={{ uri: user.imageUrl }} style={styles.markerImage} />
+                  ) : (
+                    <Image source={require('../image/NoneImage.png')} style={styles.markerImage} />
+                  )}
+                </View>
+              </Marker>
+            )
           ))}
         </MapView>
           <View style={styles.buttonContainer}>
@@ -223,6 +222,13 @@ export const MapScreen = ({ route, navigation }) => {
               <View style={[styles.button, { backgroundColor: markerVisible ? '#BDBDBD' : '#EB6383' }]}>
                 <Text style={styles.buttonText}>{markerVisible ? '停止' : 'ここおるで〜'}</Text>
                 <Ionicons name={[markerVisible ? "stop-circle-outline" : "beer-outline"]} size={70} style={styles.icon} />
+              </View>
+            </TouchableOpacity>
+          </View></>
+          <View style={styles.topLeftButtonContainer}>
+            <TouchableOpacity onPress={handleReflesh}>
+              <View style={styles.topLeftButton}>
+              <Ionicons name="refresh-outline" style={styles.topLeftButtonlogo}></Ionicons>
               </View>
             </TouchableOpacity>
           </View></>
@@ -299,5 +305,20 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'center',
     color: "#EB6383"
+  },
+  topLeftButtonContainer: {
+    position: 'absolute',
+    top: 80,
+    left: 25,
+  },
+  topLeftButton: {
+    backgroundColor: '#BDBDBD',
+    padding: 10,
+    borderRadius: 100,
+  },
+  topLeftButtonlogo: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 40,
   },
 });
