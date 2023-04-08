@@ -43,6 +43,11 @@ const screenOption = ({ route }) => ({
 
     return <Ionicons name={iconName} size={size} color={iconColor} />;
   },
+  tabBarActiveTintColor: 'red',
+  tabBarStyle: { 
+    display: 'flex', 
+    // その他のtabBarStyleのオプション
+  },
 });
 
 const headerOptions = {
@@ -135,10 +140,11 @@ export default function App() {
         <NavigationContainer>
           {user ? (
             <Tab.Navigator screenOptions={screenOption}>
-              <Tab.Screen name="ChatTab" component={ChatStack} options={{ headerShown: false, title: "トーク", initialParams: { route: 'chat' } }} />
-              <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false, title: "マップ" }} />
-              <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false, title: "アカウント" }} />
-            </Tab.Navigator>
+  <Tab.Screen name="ChatTab" component={ChatStack} options={{ headerShown: false, title: "トーク", initialParams: { route: 'chat' } }} />
+  <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false, title: "マップ" }} />
+  <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false, title: "アカウント" }} />
+</Tab.Navigator>
+
           ) : (
             <Stack.Navigator>
               <Stack.Screen name="HomeStack" component={HomeStack} options={{ headerShown: false }} />

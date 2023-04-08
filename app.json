@@ -15,7 +15,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Your location is used to provide services",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Your location is used to provide services"
+      }
     },
     "android": {
       "adaptiveIcon": {
