@@ -44,8 +44,8 @@ const screenOption = ({ route }) => ({
     return <Ionicons name={iconName} size={size} color={iconColor} />;
   },
   tabBarActiveTintColor: 'red',
-  tabBarStyle: { 
-    display: 'flex', 
+  tabBarStyle: {
+    display: 'flex',
     // その他のtabBarStyleのオプション
   },
 });
@@ -61,7 +61,7 @@ const HomeStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Usage" component={UsageScreen} options={{...headerOptions, title: '使い方'}} />
+      <Stack.Screen name="Usage" component={UsageScreen} options={{ ...headerOptions, title: '使い方' }} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -86,11 +86,11 @@ const AccuntStack = () => {
     <Stack.Navigator>
       <Stack.Screen name="Accunt" component={AccuntScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Map" component={MapScreen} />
-      <Stack.Screen name="List" component={ListScreen} options={headerOptions}/>
-      <Stack.Screen name="User" component={UserScreen} options={{...headerOptions, title: 'フォロー'}}/>
-      <Stack.Screen name="Chat" component={ChatScreen} options={headerOptions}/>
-      <Stack.Screen name="QRCode" component={QRCodeScannerScreen} options={headerOptions}/>
-      <Stack.Screen name="Usage" component={UsageScreen} options={{...headerOptions, title: '使い方'}}/>
+      <Stack.Screen name="List" component={ListScreen} options={headerOptions} />
+      <Stack.Screen name="User" component={UserScreen} options={{ ...headerOptions, title: 'フォロー' }} />
+      <Stack.Screen name="Chat" component={ChatScreen} options={headerOptions} />
+      <Stack.Screen name="QRCode" component={QRCodeScannerScreen} options={headerOptions} />
+      <Stack.Screen name="Usage" component={UsageScreen} options={{ ...headerOptions, title: '使い方' }} />
     </Stack.Navigator>
   );
 }
@@ -140,10 +140,10 @@ export default function App() {
         <NavigationContainer>
           {user ? (
             <Tab.Navigator screenOptions={screenOption}>
-  <Tab.Screen name="ChatTab" component={ChatStack} options={{ headerShown: false, title: "トーク", initialParams: { route: 'chat' } }} />
-  <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false, title: "マップ" }} />
-  <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false, title: "アカウント" }} />
-</Tab.Navigator>
+              <Tab.Screen name="ChatTab" component={ChatStack} options={{ headerShown: false, title: "トーク", initialParams: { route: 'chat' } }} />
+              <Tab.Screen name="MapTab" component={MapStack} options={{ headerShown: false, title: "マップ" }} />
+              <Tab.Screen name="AccuntTab" component={AccuntStack} options={{ headerShown: false, title: "アカウント"}} />
+            </Tab.Navigator>
 
           ) : (
             <Stack.Navigator>

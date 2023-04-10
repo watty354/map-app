@@ -11,8 +11,10 @@ export const UsageScreen = ({ route, navigation }) => {
       <Text style={styles.title}>5秒でわかる使い方</Text>
       <View style={styles.listItem}>
         <Text style={styles.listTitle}>1. ボタンを押すと相互フォロー者のみに位置が<Text style={styles.pri}>共有</Text>されます</Text>
+        <Text style={styles.subText}>※追跡ではありません。ボタンを押したその時点の場所が表示されます</Text>
         {/* <Text style={styles.listTitle}>位置が共有されます！</Text> */}
         <Text style={styles.listTitle}>2. 停止ボタンを押すと位置共有が停止されます！</Text>
+        <Text style={styles.subText}>（２時間経つと自動で停止されます）</Text>
         <View style={styles.row}>
           <Image source={require('../image/Sample.png')} style={styles.image} />
           <Image source={require('../image/Sample2.png')} style={styles.image} />
@@ -110,5 +112,9 @@ const styles = StyleSheet.create({
     width: 300, // 画像の幅
     height: 70,
     resizeMode: 'contain', // 画像を縮小せずにフィット
+  },
+  subText: {
+    fontSize: 12, // フォントサイズ
+    marginBottom: 5
   }
 });

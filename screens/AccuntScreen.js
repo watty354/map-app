@@ -131,6 +131,7 @@ export const AccuntScreen = ({ navigation }) => {
                 <View style={styles.idContainer}>
                     <TextInput
                         value={userName}
+                        placeholder="検索したい名前"
                         onChangeText={(value) => setName(value)}
                         style={styles.input}
                     />
