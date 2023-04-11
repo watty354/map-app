@@ -15,11 +15,15 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 export const ButtunPrompt = (props) => {
   let isPrimary = false;
   let isDispach = false;
+  let idDelete = false;
   if (props.action === "新規作成" || props.action === "友達一覧" || props.action === "始める" ){
     isPrimary= true;
   }
   if (props.action === "５秒でわかる使い方" || props.action === "フォロー解除"){
     isDispach= true;
+  }
+  if (props.action === "アカウント削除" || props.action === "アカウントを削除する"){
+    idDelete = true;
   }
 
   return (
@@ -29,6 +33,7 @@ export const ButtunPrompt = (props) => {
           styles.loginButton,
           isPrimary ? { backgroundColor: '#EB6383' } : null,
           isDispach ? { backgroundColor: '#BDBDBD' } : null,
+          idDelete ? { backgroundColor: '#4F4F4F' } : null,
         ]}
         onPress={props.onPress}
       >

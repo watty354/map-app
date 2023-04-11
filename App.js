@@ -12,6 +12,7 @@ import { UserScreen } from './screens/UserScreen'
 import { ChatScreen } from './screens/ChatScreen'
 import { UsageScreen } from './screens/UsageScreen'
 import { ChatListScreen } from './screens/ChatList'
+import { DeleteUserScreen } from './screens/DeleteUserScreen'
 import { QRCodeScannerScreen } from './screens/QRCodeScannerScreen'
 import { TermsOfServiceScreen } from './const/TermsOfServiceScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -90,7 +91,8 @@ const AccuntStack = () => {
       <Stack.Screen name="User" component={UserScreen} options={{ ...headerOptions, title: 'フォロー' }} />
       <Stack.Screen name="Chat" component={ChatScreen} options={headerOptions} />
       <Stack.Screen name="QRCode" component={QRCodeScannerScreen} options={headerOptions} />
-      <Stack.Screen name="Usage" component={UsageScreen} options={{ ...headerOptions, title: '使い方' }} />
+      <Stack.Screen name="Usage" component={UsageScreen} options={{ ...headerOptions, title: '5秒でわかる使い方' }} />
+      <Stack.Screen name="Delete" component={DeleteUserScreen} options={{ ...headerOptions, title: 'アカウント削除' }} />
     </Stack.Navigator>
   );
 }

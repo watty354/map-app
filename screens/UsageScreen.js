@@ -8,7 +8,6 @@ export const UsageScreen = ({ route, navigation }) => {
     // <ScrollView>
     <View style={styles.container}>
       <Image source={require('../image/logo.png')} style={styles.logo} />
-      <Text style={styles.title}>5秒でわかる使い方</Text>
       <View style={styles.listItem}>
         <Text style={styles.listTitle}>1. ボタンを押すと相互フォロー者のみに位置が<Text style={styles.pri}>共有</Text>されます</Text>
         <Text style={styles.subText}>※追跡ではありません。ボタンを押したその時点の場所が表示されます</Text>
@@ -52,14 +51,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16, // 左右のpadding
-    paddingVertical: 16, // 上下のpadding
+    // paddingHorizontal: 16, // 左右のpadding
+    // paddingVertical: 16, // 上下のpadding
   },
   title: {
+    width: '100%',
     fontSize: 32, // フォントサイズ
     fontWeight: 'bold', // 太字
     marginBottom: 24, // タイトルの下の余白
-    color: '#EB6383'
+    color: '#fff',
+    backgroundColor: '#EB6383',
+    textAlign: 'center', // 中央揃え
+    paddingVertical: 16, // 上下のpadding
   },
   listItem: {
     marginBottom: 12, // リストのアイテムごとの余白
@@ -100,21 +103,19 @@ const styles = StyleSheet.create({
   devItem: {
     paddingHorizontal: 16, // 左右のpadding
     paddingVertical: 24, // 上下のpadding
-    position:'absolute',
     bottom:24,
   },
   pri: {
     color: '#EB6383'
   },
   logo: {
-    position:'absolute',
-    top:42,
     width: 300, // 画像の幅
     height: 70,
     resizeMode: 'contain', // 画像を縮小せずにフィット
+    marginBottom: 10
   },
   subText: {
     fontSize: 12, // フォントサイズ
-    marginBottom: 5
+    marginBottom: 10
   }
 });

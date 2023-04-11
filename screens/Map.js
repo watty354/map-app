@@ -95,7 +95,7 @@ export const MapScreen = ({ route, navigation }) => {
     // let location = userLocation();
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      setErrorMsg('Permission to access location was denied');
+      setErrorMsg('位置共有の許可してください');
     }
     let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
     setMapRegion({
@@ -114,7 +114,7 @@ export const MapScreen = ({ route, navigation }) => {
     if (markerVisible) {
       Alert.alert('停止', '位置が共有を停止しますか？', [
         {
-          text: 'Cancel',
+          text: 'キャンセル',
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
@@ -123,7 +123,7 @@ export const MapScreen = ({ route, navigation }) => {
     } else {
       Alert.alert('共有開始', '今から相互フォローの人に位置が共有されます', [
         {
-          text: 'Cancel',
+          text: 'キャンセル',
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },

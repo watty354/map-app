@@ -88,7 +88,11 @@ export const AccuntScreen = ({ navigation }) => {
         // setLoginUsersData(data)
         dispatch(storeImage(imageurl));
         setLoginUserImage(imageurl);
+    };
 
+    const handleDelete = async () => {
+        const data = await getLoginUsersData();
+        navigation.navigate('Delete', { user: data });
     };
 
     return (
@@ -147,6 +151,13 @@ export const AccuntScreen = ({ navigation }) => {
                     <ButtunPrompt
                         action="５秒でわかる使い方"
                         onPress={() => navigation.navigate('Usage', { action: action })}
+                    />
+                </View>
+
+                <View style={styles.anatherContainer}>
+                    <ButtunPrompt
+                        action="アカウント削除"
+                        onPress={handleDelete}
                     />
                 </View>
             </View>
@@ -258,6 +269,9 @@ const styles = StyleSheet.create({
     },
     fliendContainer: {
         marginBottom: 36,
+    },
+    anatherContainer: {
+        marginBottom: 10,
     }
 });
 

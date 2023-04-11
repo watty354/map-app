@@ -2,7 +2,7 @@
   "expo": {
     "name": "map-app",
     "slug": "map-app",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,11 +15,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Your location is used to provide services",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Your location is used to provide services"
-      }
+        "NSLocationWhenInUseUsageDescription": "サービス提供のために位置情報が使用されます",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "サービス提供のために常に位置情報が使用されます"
+      },
+      "bundleIdentifier": "com.wadamitsuki.mapapp",
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +31,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0a7f9752-18ea-44ea-8898-735e7d5d0788"
+      }
     }
   }
 }
