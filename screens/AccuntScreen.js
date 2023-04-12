@@ -35,13 +35,14 @@ export const AccuntScreen = ({ navigation }) => {
                 Alert.alert('写真を設定して下さい');
             }
         };
-        if (clipUserId && clipName && clipImage) {
-            setLoginUserId(clipUserId);
-            setLoginUserName(clipName);
-            setLoginUserImage(clipImage);
-        } else {
+        // if (clipUserId && clipName && clipImage != "" ) {
+        //     setLoginUserId(clipUserId);
+        //     setLoginUserName(clipName);
+        //     setLoginUserImage(clipImage);
+        //     console.log(clipImage);
+        // } else {
             fetchLoginUsersData();
-        }
+        // }
     }, []);
 
     // 友達（相互フォロー）リストへ遷移
@@ -82,7 +83,8 @@ export const AccuntScreen = ({ navigation }) => {
         if (!uri) {
             return;
         }
-        const beforeUri = loginUserImage ? loginUserImage : null;
+        const user = await getLoginUsersData();
+        const beforeUri = user.imageUrl ? user.imageUrl : null;
         const imageurl = await imageStore(beforeUri, uri);
         // const data = await getLoginUsersData();
         // setLoginUsersData(data)

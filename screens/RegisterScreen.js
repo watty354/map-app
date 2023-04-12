@@ -10,6 +10,7 @@ import { CheckBox } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { storePass, storeEmail, storeName, storeUserId, storeImage} from '../store/userSlice';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { containsInappropriateWords } from '../lib/filterWords'
 
 
 export const RegisterScreen = ({ navigation }) => {
@@ -34,6 +35,13 @@ export const RegisterScreen = ({ navigation }) => {
 
     //displayName重複チェック
     if (name) {
+      // 不適切チェック
+      if (containsInappropriateWords(name)) {
+        Alert.alert('エラー', '投稿に不適切な単語が含まれています！');
+        return;
+      }
+
+      // 投稿を処理する他のコード
       const followedarray = await getSearchName(name);
       if (followedarray.some(user => user.displayName === name)) {
         Alert.alert('エラー', 'ニックネームが他の人と重複してるので他のニックネームをつけて下さい');

@@ -3814,6 +3814,11 @@ expo-status-bar@~1.4.4:
   resolved "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-1.4.4.tgz"
   integrity sha512-5DV0hIEWgatSC3UgQuAZBoQeaS9CqeWRZ3vzBR9R/+IUD87Adbi4FGhU10nymRqFXOizGsureButGZIXPs7zEA==
 
+expo-tracking-transparency@~3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/expo-tracking-transparency/-/expo-tracking-transparency-3.0.3.tgz#ed18aa32cdabca54dacc241bafdf38b3ba079c35"
+  integrity sha512-jM/wIEKGV6DlHKNcEWN39HRPosJhRcbCrmfgWVn5A3ILYsWWvM4pToKGz34BLmg/6iTsq+ONNzuQiwBxJJzbWA==
+
 expo@~48.0.6:
   version "48.0.7"
   resolved "https://registry.npmjs.org/expo/-/expo-48.0.7.tgz"

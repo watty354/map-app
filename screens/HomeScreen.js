@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Alert, TextInput } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
-import { LoginScreen } from '../screens/RegisterScreen'
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { reload } from 'firebase/auth';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from '../lib/firebase'
 import { useDispatch, useSelector } from 'react-redux';
 import { storePass, storeEmail} from '../store/userSlice';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 export const HomeScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');

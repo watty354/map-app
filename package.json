@@ -19,6 +19,7 @@
     "expo-image-picker": "~14.1.1",
     "expo-location": "~15.1.1",
     "expo-status-bar": "~1.4.4",
+    "expo-tracking-transparency": "~3.0.3",
     "firebase": "9.17.1",
     "react": "18.2.0",
     "react-firebase-hooks": "^5.1.1",
