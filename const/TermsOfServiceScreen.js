@@ -9,7 +9,7 @@ export const TermsOfServiceScreen = () => {
       <Text style={styles.title}>利用規約</Text>
       <Text style={styles.text}>第1条　はじめに</Text>
       <Text style={styles.text}>
-        この利用規約（以下，「本規約」といいます。）は，位置共有アプリ（以下，「当アプリ」といいます。）
+        この利用規約（以下，「本規約」といいます。）は，nominau（以下，「当アプリ」といいます。）
         の利用条件を定めるものです。利用者の皆様には，本規約に従って当アプリを利用していただきます。
       </Text>
       <Text style={styles.text}>第2条　定義</Text>

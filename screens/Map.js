@@ -63,6 +63,9 @@ export const MapScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       const matchingIds = await getMatchingIds();
+      if (matchingIds.length === 0) {
+        return;
+      }
       const unsubscribe = onSnapshot(
         query(collection(db, 'users'), where('displayMap', '==', true), where('user_id', 'in', matchingIds),),
         (querySnapshot) => {

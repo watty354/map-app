@@ -49,11 +49,15 @@ export const AccuntScreen = ({ navigation }) => {
     }, []);
 
     // 友達（相互フォロー）リストへ遷移
-    const handleFrienfList = async () => {
+    const handleFriendList = async () => {
         const matchingIds = await getMatchingIds();
-        const user = await getUseresData(matchingIds);
-        navigation.navigate('List', { user: user });
-    };
+        const users = await getUseresData(matchingIds);
+        
+        // userが[]じゃなかったら、match: trueを追加する
+        const updatedUsers = users.length > 0 ? users.map(user => ({ ...user, match: true })) : users;
+        navigation.navigate('List', { user: updatedUsers });
+      };
+      
 
     // フォロー申請画面に遷移するハンドラー
     const handleFollowRequest = async () => {
@@ -93,7 +97,7 @@ export const AccuntScreen = ({ navigation }) => {
         {
             title: "友達一覧",
             icon: "people-circle-outline",
-            action: handleFrienfList,
+            action: handleFriendList,
         },
         {
             title: "フォロー申請一覧",
