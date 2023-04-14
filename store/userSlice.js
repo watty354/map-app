@@ -8,6 +8,7 @@ const initialState  = {
     password: '',
     displayName: '',
     displayImage: '',
+    blockUsers: []
   }
 
 // 処理（Action）
@@ -34,13 +35,21 @@ export const userSlice = createSlice({
     storeImage: (state, action) => {
         const image = action.payload;
         state.displayImage = image;
+    },
+    storeBlockUsers: (state, action) => {
+        const blockUser = action.payload;
+        if (!state.blockUsers) {
+          state.blockUsers = [];
+        }
+        state.blockUsers.push(blockUser);
+        // state.displayImage = blockUser;
     }
 
   },
 })
 
 // 処理（Action）を定義
-export const { storeUserId, storeName, storeImage, storeEmail, storePass} = userSlice.actions
+export const { storeUserId, storeName, storeImage, storeEmail, storePass, storeBlockUsers} = userSlice.actions
 
 // 名前のやつでね〜
 export default userSlice.reducer

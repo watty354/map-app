@@ -6,18 +6,27 @@ import { db, getChatUsersData, getAllUsers, auth, getFollowedData, getSendUsersD
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 export const ChatListScreen = ({ navigation }) => {
   const [usersData, setUsersData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const isFocused = useIsFocused();
 
+  const blockUsers = useSelector((state) => state.user.blockUsers);
+
+    // 共有しているユーザーを取得して、ブロックしたユーザーを除外する
+    const getFilteredUsers = (allUsers) => {
+      return allUsers.filter((user) => !blockUsers.includes(user.user_id));
+    };
+
   //初期化時:共有してるユーザを取得
   useEffect(() => {
     const fetchData = async () => {
         const uid = auth.currentUser.uid;
         const data = await getChatUsersData(uid);
-        setUsersData(data);
+        const filteredUsers = getFilteredUsers(data);
+        setUsersData(filteredUsers);
       } 
       if(isFocused) {
         fetchData();

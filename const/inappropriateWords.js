@@ -1,1 +1,1 @@
-export const inappropriateWords = ["badword1", "badword2", "badword3"]; 
+export const inappropriateWords = ["ちんこ", "ちんこちんこ", "まんこ", "まんこ", "キチガイ", "バカ", "死ね", "死にたい", "ちんげ", "陰毛", "いんもう", "フェラ", "非国民", "乞食", "アスペ", "ハゲ", "尻軽", "障害者", "やりもく", "ヤリモク", "売女", "バカまんこ", "うんこ"]; 

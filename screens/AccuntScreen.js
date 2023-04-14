@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, Image, SafeAreaView, TouchableOpacity, StyleSheet, ScrollView, Alert, FlatList } from 'react-native';
 import { db, getLoginUsersData, getSearchName, auth, imageStore, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import QRCode from 'react-native-qrcode-svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { storeUserId, storeImage, storeName } from '../store/userSlice';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { SettingListItem } from "../components/SettingListItem";
+
 
 export const AccuntScreen = ({ navigation }) => {
     const [loginUsersData, setLoginUsersData] = useState([]);
@@ -31,7 +34,7 @@ export const AccuntScreen = ({ navigation }) => {
             setLoginUserName(data.displayName);
             setLoginUserImage(data.imageUrl);
             setLoginUsersData(data);
-            if (!data.imageUrl){
+            if (!data.imageUrl) {
                 Alert.alert('写真を設定して下さい');
             }
         };
@@ -41,7 +44,7 @@ export const AccuntScreen = ({ navigation }) => {
         //     setLoginUserImage(clipImage);
         //     console.log(clipImage);
         // } else {
-            fetchLoginUsersData();
+        fetchLoginUsersData();
         // }
     }, []);
 
@@ -67,17 +70,6 @@ export const AccuntScreen = ({ navigation }) => {
         navigation.navigate('List', { user: user });
     };
 
-    //名前検索
-    const handleSearchName = async () => {
-        const user = await getSearchName(userName);
-        navigation.navigate('List', { user: user });
-    }
-
-    // ログインしていない場合はログインページにリダイレクト
-    // if (!loginUsersData) {
-    //     navigation.navigate('Home');
-    // }
-
     const onPickImage = async () => {
         const uri = await pickImage();
         if (!uri) {
@@ -97,89 +89,92 @@ export const AccuntScreen = ({ navigation }) => {
         navigation.navigate('Delete', { user: data });
     };
 
+    const settingsData = [
+        {
+            title: "友達一覧",
+            icon: "people-circle-outline",
+            action: handleFrienfList,
+        },
+        {
+            title: "フォロー申請一覧",
+            icon: "add-outline",
+            action: handleFollowRequest,
+        },
+        {
+            title: "名前検索",
+            icon: "search-outline",
+            // action: handleSearchName,
+            action: () => navigation.navigate("NameSearch"),
+        },
+        {
+            title: "５秒でわかる使い方",
+            icon: "help-outline",
+            action: () => navigation.navigate("Usage", { action: action }),
+        },
+        {
+            title: "報告",
+            icon: "information-outline",
+            action: () => navigation.navigate("Form"),
+        },
+        {
+            title: "アカウント削除",
+            icon: "trash",
+            action: handleDelete,
+        },
+    ];
+
+
     return (
         <ScrollView>
 
-            <View style={styles.container}>
-                <View style={styles.subContainer}>
-                    <TouchableOpacity onPress={onPickImage}>
-                        {loginUserImage ? (
-                            <Image source={{ uri: loginUserImage }} style={styles.avatar} />
-                        ) : (
-                            <View style={styles.avatarPlaceholder}>
-                                <Text style={styles.avatarPlaceholderText}>写真を選択</Text>
-                            </View>
-                        )}
-                    </TouchableOpacity>
-                    <Text style={styles.name}>{loginUserName}</Text>
-                    {/* <QRCodeGenerator userId={uid} /> */}
-                    <View style={styles.qrCode}>
 
+        <View style={styles.container}>
+            <View style={styles.subContainer}>
+                <TouchableOpacity onPress={onPickImage}>
+                    {loginUserImage ? (
+                        <Image source={{ uri: loginUserImage }} style={styles.avatar} />
+                    ) : (
+                        <View style={styles.avatarPlaceholder}>
+                            <Text style={styles.avatarPlaceholderText}>写真を選択</Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
+                <Text style={styles.name}>{loginUserName}</Text>
+                <View style={styles.qrCode}>
                     {loginUserId && <QRCode value={loginUserId} size={200} style={styles.qrCode} />}
-                    </View>
-                    <ButtunPrompt
-                        action="QR読み取り"
-                        onPress={() => navigation.navigate('QRCode')}
-                    />
                 </View>
-
-                <View style={styles.fliendContainer}>
-                    <ButtunPrompt
-                        action="友達一覧"
-                        onPress={handleFrienfList}
-                    />
-                    <ButtunPrompt
-                        action="フォロー申請一覧"
-                        onPress={handleFollowRequest}
-                    />
-                </View>
-
-                <View style={styles.idContainer}>
-                    <TextInput
-                        value={userName}
-                        placeholder="検索したい名前"
-                        onChangeText={(value) => setName(value)}
-                        style={styles.input}
-                    />
-                    <ButtunPrompt
-                        action="名前検索"
-                        onPress={handleSearchName}
-                    />
-                </View>
-
-
-
-                <View style={styles.anatherContainer}>
-                    <ButtunPrompt
-                        action="５秒でわかる使い方"
-                        onPress={() => navigation.navigate('Usage', { action: action })}
-                    />
-                </View>
-
-                <View style={styles.anatherContainer}>
-                    <ButtunPrompt
-                        action="アカウント削除"
-                        onPress={handleDelete}
-                    />
-                </View>
+                <ButtunPrompt action="QR読み取り" onPress={() => navigation.navigate('QRCode')} />
             </View>
-        </ScrollView>
 
+
+            <View style={styles.flatListContainer}>
+            {settingsData.map((item, index) => (
+            <SettingListItem
+                key={index}
+                title={item.title}
+                icon={item.icon}
+                onPress={item.action}
+            />
+        ))}
+            </View>
+
+
+        </View>
+        </ScrollView>
     );
-}
+};
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
         paddingHorizontal: 20,
-        marginTop: 100,
-        marginBottom: 150,
+
     },
     subContainer: {
         alignItems: 'center',
         marginBottom: 50,
+        paddingTop: 100,
     },
     idContainer: {
         marginBottom: 50,
@@ -253,17 +248,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
-    input: {
-        width: '100%',
-        borderWidth: 1,
-        borderColor: '#FA9191',
-        borderRadius: 32,
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        marginBottom: 10,
-        fontSize: 16,
-        backgroundColor: '#F8F8F8',
-    },
     qrCode: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -274,6 +258,10 @@ const styles = StyleSheet.create({
     },
     anatherContainer: {
         marginBottom: 10,
-    }
+    },
+    flatListContainer: {
+        flexGrow: 1,
+        paddingBottom: 20,
+      },
 });
 

@@ -14,6 +14,8 @@ import { UsageScreen } from './screens/UsageScreen'
 import { ChatListScreen } from './screens/ChatList'
 import { DeleteUserScreen } from './screens/DeleteUserScreen'
 import { QRCodeScannerScreen } from './screens/QRCodeScannerScreen'
+import { NameSearchScreen } from './screens/NameSearchScreen'
+import { FormScreen } from './screens/FormScreen'
 import { TermsOfServiceScreen } from './const/TermsOfServiceScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -93,6 +95,8 @@ const AccuntStack = () => {
       <Stack.Screen name="QRCode" component={QRCodeScannerScreen} options={headerOptions} />
       <Stack.Screen name="Usage" component={UsageScreen} options={{ ...headerOptions, title: '5秒でわかる使い方' }} />
       <Stack.Screen name="Delete" component={DeleteUserScreen} options={{ ...headerOptions, title: 'アカウント削除' }} />
+      <Stack.Screen name="NameSearch" component={NameSearchScreen} options={{ ...headerOptions, title: '検索' }} />
+      <Stack.Screen name="Form" component={FormScreen} options={{ ...headerOptions, title: 'お問い合わせ' }} />
     </Stack.Navigator>
   );
 }
