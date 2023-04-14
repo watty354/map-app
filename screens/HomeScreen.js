@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, Alert, TextInput, TouchableOpacity } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from '../lib/firebase'
 import { useDispatch, useSelector } from 'react-redux';
-import { storePass, storeEmail} from '../store/userSlice';
+import { storePass, storeEmail } from '../store/userSlice';
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export const HomeScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
+    const [showPassword, setShowPassword] = useState(false);
+
     const action = "Home"
     const dispatch = useDispatch();
     const clipEmail = useSelector((state) => state.user.email);
@@ -19,10 +21,10 @@ export const HomeScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (clipEmail && clipPass) {
-          setEmail(clipEmail);
-          setPassword(clipPass);
+            setEmail(clipEmail);
+            setPassword(clipPass);
         }
-      }, []);
+    }, []);
 
     // ログイン処理
     const handleLogin = () => {
@@ -49,7 +51,7 @@ export const HomeScreen = ({ navigation }) => {
                 }
             });
     }
-// console.log(clipEmail);
+    // console.log(clipEmail);
     return (
         <View style={styles.container}>
             {/* <Ionicons name="beer" size={80} style={styles.icon} /> */}
@@ -60,13 +62,18 @@ export const HomeScreen = ({ navigation }) => {
                 value={email}
                 onChangeText={(text) => setEmail(text)}
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-                secureTextEntry
-            />
+            <View style={styles.inputPass}>
+                <TextInput
+                    style={styles.inputPass_input}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                    secureTextEntry={!showPassword}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10 }}>
+                    <Ionicons name={showPassword ? 'eye-outline' : 'eye-off-outline'} size={24} color="black" />
+                </TouchableOpacity>
+            </View>
 
             <ButtunPrompt
                 action="ログインする"
@@ -138,5 +145,22 @@ const styles = StyleSheet.create({
         width: 300, // 画像の幅
         height: 150,
         resizeMode: 'contain', // 画像を縮小せずにフィット
-      }
+    },
+    inputPass: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#FA9191',
+        borderRadius: 32,
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        marginBottom: 10,
+        fontSize: 16,
+        backgroundColor: '#F8F8F8',
+    },
+    inputPass_input: {
+        width: '100%',
+        fontSize: 16,
+    }
 });

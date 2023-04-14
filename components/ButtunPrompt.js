@@ -19,10 +19,10 @@ export const ButtunPrompt = (props) => {
   if (props.action === "新規作成" || props.action === "友達一覧" || props.action === "始める" || props.action ==="送信"){
     isPrimary= true;
   }
-  if (props.action === "５秒でわかる使い方" || props.action === "フォロー解除"){
+  if (props.action === "５秒でわかる使い方" || props.action === "フォロー解除" || props.action === "ブロック"){
     isDispach= true;
   }
-  if (props.action === "アカウント削除" || props.action === "アカウントを削除する" || props.action === "ブロック"){
+  if (props.action === "アカウント削除" || props.action === "アカウントを削除する"){
     idDelete = true;
   }
 

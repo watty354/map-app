@@ -17,6 +17,7 @@ export const ChatListScreen = ({ navigation }) => {
 
     // 共有しているユーザーを取得して、ブロックしたユーザーを除外する
     const getFilteredUsers = (allUsers) => {
+      const blockUsers = blockUsers || [];
       return allUsers.filter((user) => !blockUsers.includes(user.user_id));
     };
 

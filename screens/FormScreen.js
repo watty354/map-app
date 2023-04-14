@@ -1,22 +1,21 @@
-import { async } from '@firebase/util';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Alert, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Alert, TextInput, ScrollView, Linking } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { storeFormSend } from '../lib/firebase'
-import { useDispatch, useSelector } from 'react-redux';
-import { storeUserId, storeImage, storeName } from '../store/userSlice';
+import { useSelector } from 'react-redux';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-export const FormScreen = ({navigation}) => {
+export const FormScreen = ({ navigation }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [inputText, setInputText] = useState('');
     const [userName, setName] = useState('');
 
     const clipName = useSelector((state) => state.user.displayName);
-        //ログインしてるユーザを取得
-        useEffect(() => {
+    //ログインしてるユーザを取得
+    useEffect(() => {
 
-            setName(clipName);
-        }, []);
+        setName(clipName);
+    }, []);
 
     const handleOptionPress = (option) => {
         setSelectedOption(option);
@@ -39,63 +38,72 @@ export const FormScreen = ({navigation}) => {
     };
 
     const formSend = async () => {
-        await storeFormSend(selectedOption, inputText,userName);
-        Alert.alert('成功', 'お問い合わせが送信されました。');
+        await storeFormSend(selectedOption, inputText, userName);
+        Alert.alert('お問い合わせが送信されました。');
         navigation.navigate('Accunt');
     }
 
     return (
         <ScrollView style={styles.warrap}>
-        <View style={styles.container}>
-            <Text style={styles.title}>お問い合わせフォーム</Text>
+            {/* Twitter */}
+            <View style={styles.container}>
+                <View style={styles.subContainer}>
+                    <Text style={styles.subtext}>\TwitterのDMからだと即座に対応できます！/</Text>
+                    <TouchableOpacity onPress={() => Linking.openURL('https://twitter.com/nominau_nomi')}>
+                        <FontAwesome name="twitter" size={48} color="#1DA1F2" />
+                    </TouchableOpacity>
+                </View>
+                {/* <Text style={styles.title}>お問い合わせフォーム</Text> */}
 
-            <Text style={styles.label}>お問い合わせ項目</Text>
-            <View style={styles.optionContainer}>
-                <TouchableOpacity
-                    style={[
-                        styles.option,
-                        selectedOption === 'bug_report' && styles.selectedOption,
-                    ]}
-                    onPress={() => handleOptionPress('bug_report')}
-                >
-                    <Text
+                <Text style={styles.label}>お問い合わせ項目</Text>
+                <View style={styles.optionContainer}>
+                    <TouchableOpacity
                         style={[
-                            styles.optionText,
-                            selectedOption === 'bug_report' && styles.selectedOptionText,
+                            styles.option,
+                            selectedOption === 'bug_report' && styles.selectedOption,
                         ]}
+                        onPress={() => handleOptionPress('bug_report')}
                     >
-                        バグ報告
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[
-                        styles.option,
-                        selectedOption === 'suspicious_user' && styles.selectedOption,
-                    ]}
-                    onPress={() => handleOptionPress('suspicious_user')}
-                >
-                    <Text
+                        <Text
+                            style={[
+                                styles.optionText,
+                                selectedOption === 'bug_report' && styles.selectedOptionText,
+                            ]}
+                        >
+                            バグ報告
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         style={[
-                            styles.optionText,
-                            selectedOption === 'suspicious_user' && styles.selectedOptionText,
+                            styles.option,
+                            selectedOption === 'suspicious_user' && styles.selectedOption,
                         ]}
+                        onPress={() => handleOptionPress('suspicious_user')}
                     >
-                        不審なユーザ報告
-                    </Text>
-                </TouchableOpacity>
+                        <Text
+                            style={[
+                                styles.optionText,
+                                selectedOption === 'suspicious_user' && styles.selectedOptionText,
+                            ]}
+                        >
+                            不審なユーザ報告
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+
+
+                <Text style={styles.label}>内容</Text>
+                <TextInput
+                    multiline={true}
+                    style={styles.textInput}
+                    value={inputText}
+                    onChangeText={setInputText}
+                    placeholder="お問い合わせ内容を入力"
+                />
+
+                <ButtunPrompt action="送信" onPress={handleSubmit} />
             </View>
-
-            <Text style={styles.label}>内容</Text>
-            <TextInput
-                multiline={true}
-                style={styles.textInput}
-                value={inputText}
-                onChangeText={setInputText}
-                placeholder="お問い合わせ内容を入力"
-            />
-
-            <ButtunPrompt action="送信" onPress={handleSubmit} />
-        </View>
 
         </ScrollView>
     );
@@ -111,7 +119,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 20,
-        marginTop: 100
+        marginTop: 60
     },
     title: {
         fontSize: 24,
@@ -158,4 +166,14 @@ const styles = StyleSheet.create({
         height: 200,
         textAlignVertical: 'top',
     },
+    subContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 32
+    },
+    subtext: {
+        fontSize: 12,
+        marginBottom: 6
+    }
+
 });
