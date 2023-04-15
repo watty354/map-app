@@ -2,7 +2,7 @@
   "expo": {
     "name": "nominau",
     "slug": "map-app",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,7 +21,7 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "サービス提供のために常に位置情報が使用されます"
       },
       "bundleIdentifier": "com.wadamitsuki.mapapp",
-      "buildNumber": "5"
+      "buildNumber": "6"
     },
     "android": {
       "adaptiveIcon": {
