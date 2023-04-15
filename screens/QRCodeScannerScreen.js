@@ -19,11 +19,12 @@ export const QRCodeScannerScreen = ({ navigation }) => {
 
   const handleBarCodeScanned = async ({ data }) => {
     setScanned(true);
+    const action = "QRcode"
     // QRコードからuserIdを取得
     const userId = data;
     // userIdをもとにユーザ情報を取得
     const userData = await getUserData(userId);
-    navigation.navigate('User', { user: userData })
+    navigation.navigate('User', { user: userData, action: action})
     // setUserData(userData);
   };
 

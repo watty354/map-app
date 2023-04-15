@@ -52,15 +52,17 @@ export const AccuntScreen = ({ navigation }) => {
     const handleFriendList = async () => {
         const matchingIds = await getMatchingIds();
         const users = await getUseresData(matchingIds);
-        
+        const action = "match";
+
         // userが[]じゃなかったら、match: trueを追加する
         const updatedUsers = users.length > 0 ? users.map(user => ({ ...user, match: true })) : users;
-        navigation.navigate('List', { user: updatedUsers });
+        navigation.navigate('List', { user: updatedUsers , action:action});
       };
       
 
     // フォロー申請画面に遷移するハンドラー
     const handleFollowRequest = async () => {
+        const action = "followed";
         // フォローされた人
         const followedUser = await getFollowedId();
         // フォローした人
@@ -71,7 +73,7 @@ export const AccuntScreen = ({ navigation }) => {
         const userIds = followedUser.filter(userId => !followIds.includes(userId));
         const user = await getUseresData(userIds);
 
-        navigation.navigate('List', { user: user });
+        navigation.navigate('List', { user: user , action:action});
     };
 
     const onPickImage = async () => {

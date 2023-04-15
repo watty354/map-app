@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { db, auth, getFolloweredUsersData, deleteFollow, blockUserData, getBlockedUser } from '../lib/firebase'
+import { db, auth, getFolloweredUsersData, deleteFollow, blockUserData, getBlockedUser, addMatch, getFollowedAllId,addFollow } from '../lib/firebase'
 import { doc, setDoc, collection, updateDoc, Timestamp, arrayUnion, getDoc } from "firebase/firestore";
 import React, { useEffect, useState, useRef } from 'react';
 import { ButtunPrompt } from '../components/ButtunPrompt';
@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { storeBlockUsers } from '../store/userSlice';
 
 export const UserScreen = ({ route }) => {
-    const { user } = route.params;
+    const { user, action} = route.params;
     const [isFollowed, setIsFollowed] = useState(false);
     const uid = auth.currentUser.uid;
     const [isBlockUser, setBlockUser] = useState(false);
@@ -23,7 +23,11 @@ export const UserScreen = ({ route }) => {
                 setIsFollowed(true);
             }
         }
-        isFollowedConfirmation();
+        if (action == "match") {
+             setIsFollowed(true);
+        } else {
+            isFollowedConfirmation();
+        }
     }, [user]);
 
     //ブロックの確認
@@ -45,19 +49,20 @@ export const UserScreen = ({ route }) => {
 
     // フォロー申請処理
     const handleFollow = async () => {
-        const followDocRef = doc(db, "follow", uid);
-        const followDoc = await getDoc(followDocRef);
-        if (!followDoc.exists()) {
-            await setDoc(followDocRef, {});
+        if (action == "followed") {
+            await addMatch(uid, user.user_id);
+        } else {
+            const followedUser = await getFollowedAllId();
+            if (followedUser.includes(uid)) {
+                // uidがfollowedUserの配列に含まれている場合
+                await addMatch(uid, user.user_id);
+
+              } else {
+                // uidがfollowedUserの配列に含まれていない場合
+                await addFollow(uid, user.user_id);
+              }
+            
         }
-        //フォローTBL登録
-        const data = {
-            follower_id: uid,
-            followed_id: arrayUnion(user.user_id),
-            createdAt: Timestamp.now(),
-            updatedAt: Timestamp.now(),
-        }
-        await updateDoc(followDocRef, data);
         setIsFollowed(true)
     };
 

@@ -12,7 +12,7 @@ export const ListScreen = ({ route, navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [blockUser, setBlockUser] = useState([]);
 
-  const { user } = route.params;
+  const { user, action } = route.params;
   const blockUsers = useSelector((state) => state.user.blockUsers);
 
   // 共有しているユーザーを取得して、ブロックしたユーザーを除外する
@@ -38,6 +38,9 @@ export const ListScreen = ({ route, navigation }) => {
       setRefreshing(false);
     }
   };
+  // const handleActionScreen = () => {
+  //   navigation.navigate('User', { user: item , action:action});
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,7 +51,7 @@ export const ListScreen = ({ route, navigation }) => {
             <ListItem
               imageUrl={item.imageUrl}
               displayName={item.displayName}
-              onPress={() => navigation.navigate('User', { user: item })}
+              onPress={() => navigation.navigate('User', { user: item, action:action})}
             />
           )}
           keyExtractor={(item, index) => index.toString()}
