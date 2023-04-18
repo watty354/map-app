@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Button, Image, TouchableOpacity, Text, AppState, Alert } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Image, TouchableOpacity, Text, AppState, Alert, Modal } from 'react-native';
 import * as Location from 'expo-location';
 import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { db, getLoginUsersData, getUserData, auth, mapDisplay, mapDisplayNone, getMapFollowUsersData, getMatchingIds } from '../lib/firebase'
@@ -19,6 +19,7 @@ export const MapScreen = ({ route, navigation }) => {
   const [loginUserName, setLoginUserName] = useState("");
   const [loginUserImage, setLoginUserImage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   const clipName = useSelector((state) => state.user.displayName);
@@ -164,9 +165,13 @@ export const MapScreen = ({ route, navigation }) => {
   // AppStateのリスナーを登録
   AppState.addEventListener('change', handleAppStateChange);
 
-  const handleReflesh = async() =>{
+  const handleReflesh = async () => {
+    setIsLoading(true);
     const data = await getMapFollowUsersData();
     setUsersData(data);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   }
 
   return (
@@ -228,13 +233,24 @@ export const MapScreen = ({ route, navigation }) => {
               </View>
             </TouchableOpacity>
           </View></>
+
           <View style={styles.topLeftButtonContainer}>
             <TouchableOpacity onPress={handleReflesh}>
               <View style={styles.topLeftButton}>
-              <Ionicons name="refresh-outline" style={styles.topLeftButtonlogo}></Ionicons>
+                <Ionicons name="refresh-outline" style={styles.topLeftButtonlogo} />
               </View>
             </TouchableOpacity>
-          </View></>
+          </View>
+
+          {isLoading && (
+            <Modal transparent={true} statusBarTranslucent={true}>
+              <View style={styles.overlay}>
+                <ActivityIndicator size="large" color="#000" />
+              </View>
+            </Modal>
+          )}
+        </>
+
       ) : (
         <View>
           <ButtunPrompt
@@ -323,5 +339,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 40,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

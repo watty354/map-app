@@ -22,6 +22,8 @@ export const RegisterScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
 
+  const notUser = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/temp%2FNoneImage.png?alt=media&token=e369d1bf-9a05-4263-8a0f-aa1a1192e0d6";
+
   //登録
   const handleRegister = async () => {
     if (!isChecked) {
@@ -60,6 +62,7 @@ export const RegisterScreen = ({ navigation }) => {
           email: email,
           password: password,
           displayName: name,
+          imageUrl: notUser,
           displayMap: false,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
@@ -71,6 +74,7 @@ export const RegisterScreen = ({ navigation }) => {
         dispatch(storeEmail(email));
         dispatch(storePass(password));
         dispatch(storeName(name));
+        dispatch(storeImage(notUser));
         dispatch(storeImage(''));
         dispatch(storeUserId(uid));
         // navigation.navigate('AccuntTab');
