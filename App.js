@@ -129,6 +129,7 @@ const ChatStack = () => {
           headerStyle: { backgroundColor: '#EB6383' },
           headerTitleStyle: { color: '#fff' },
         })} />
+        <Stack.Screen name="Form" component={FormScreen} options={{ ...headerOptions, title: 'お問い合わせ' }} />
     </Stack.Navigator>
   );
 }

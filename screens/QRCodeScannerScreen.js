@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 // import { getUserData } from '../api/user';
 import { db, getUserData, getSearchName, auth, imageStore, getFollowedData } from '../lib/firebase'

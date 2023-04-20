@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Bubble, GiftedChat, Send, Avatar } from 'react-native-gifted-chat';
 import { doc, collection, onSnapshot, arrayUnion, query, orderBy, setDoc, getDoc, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
-import { View, } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Alert } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { getUserData } from '../lib/firebase';
+import { getUserData, blockUserData } from '../lib/firebase';
 import { db, auth } from '../lib/firebase';
 import { useDispatch, useSelector } from 'react-redux';
-import { storeImage } from '../store/userSlice';
+import { storeImage, storeBlockUsers} from '../store/userSlice';
 
-export const ChatScreen = ({ route }) => {
+
+export const ChatScreen = ({ route, navigation }) => {
   const { user } = route.params;
   const [messages, setMessages] = useState([]);
   const [loginUser, setLoginUser] = useState([]);
@@ -18,6 +19,59 @@ export const ChatScreen = ({ route }) => {
 
   const dispatch = useDispatch();
   const clipImage = useSelector((state) => state.user.displayImage);
+
+  // オプション
+  const [modalVisible, setModalVisible] = useState(false);
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={handleOptionsPress}>
+          <Ionicons name="ellipsis-vertical" size={24} color="#fff" style={{ marginRight: 10 }} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
+  // キャンセル処理
+  const handleOptionsPress = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  // ブロック処理
+  const handleBlock = () => {
+    Alert.alert('ブロック', '本当にブロックしますか？もう二度とフォローすることができなくなります', [
+      {
+        text: 'キャンセル',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: blockUser },
+    ]);
+  };
+  //ユーザーブロック処理
+  const blockUser = async () => {
+    const chatId = getChatId(user.user_id, auth.currentUser.uid);
+    await blockUserData(user.user_id, chatId);
+    dispatch(storeBlockUsers(user.user_id));
+    navigation.goBack(); 
+  };
+
+  // 報告処理を記述
+  const handleReport = () => {
+    Alert.alert('報告', '報告するとこのユーザーは検討後削除される可能性があります。本当に報告しますか？', [
+      {
+        text: 'キャンセル',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      { text: 'OK', onPress: ReportUser },
+    ]);
+  };
+  //報告フォームへ遷移
+  const ReportUser = async () => {
+    navigation.navigate("Form", { reportUserName: user }),
+      handleOptionsPress();
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -97,6 +151,8 @@ export const ChatScreen = ({ route }) => {
 
 
 
+
+
   const renderBubble = (props) => {
     return (
       <Bubble {...props}
@@ -139,6 +195,28 @@ export const ChatScreen = ({ route }) => {
         // renderAvatar={false} 
         showAvatarForEveryMessage={true}
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleOptionsPress}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity style={styles.modalButton} onPress={handleBlock}>
+              <Text style={styles.modalText}>ブロックする</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.modalButton} onPress={handleReport}>
+              <Text style={styles.modalText}>報告する</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.modalButton} onPress={handleOptionsPress}>
+              <Text style={[styles.modalText, { color: 'black' }]}>キャンセル</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   )
 };
@@ -150,3 +228,36 @@ const getChatId = (userId, otherUserId) => {
     return `${otherUserId}-${userId}`;
   }
 };
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalButton: {
+    marginTop: 15,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 15,
+    textAlign: 'center',
+    color: 'red'
+  },
+});

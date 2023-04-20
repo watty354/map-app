@@ -5,17 +5,26 @@ import { storeFormSend } from '../lib/firebase'
 import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-export const FormScreen = ({ navigation }) => {
+export const FormScreen = ({ route, navigation }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [inputText, setInputText] = useState('');
     const [userName, setName] = useState('');
+    const [reportName, setReportName] = useState('');
 
     const clipName = useSelector((state) => state.user.displayName);
     //ログインしてるユーザを取得
     useEffect(() => {
-
         setName(clipName);
     }, []);
+
+    useEffect(() => {
+        if (route.params && route.params.reportUserName) {
+          setReportName(route.params.reportUserName);
+          setSelectedOption('suspicious_user');
+          const { reportUserName } = route.params;
+          setInputText(`報告するユーザー：${reportUserName.displayName}\n内容：\n`);
+        }
+      }, [route.params]);
 
     const handleOptionPress = (option) => {
         setSelectedOption(option);
@@ -99,7 +108,7 @@ export const FormScreen = ({ navigation }) => {
                     style={styles.textInput}
                     value={inputText}
                     onChangeText={setInputText}
-                    placeholder="お問い合わせ内容を入力"
+                    placeholder="お問い合わせ内容を入力。不審なユーザ報告の場合は、ユーザ名も記入してください"
                 />
 
                 <ButtunPrompt action="送信" onPress={handleSubmit} />

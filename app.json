@@ -2,7 +2,7 @@
   "expo": {
     "name": "nominau",
     "slug": "map-app",
-    "version": "1.0.7",
+    "version": "1.0.10",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,10 +19,11 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "ユーザーの現時点での位置情報を利用して、相互フォローの友達に位置を表示するために位置情報が使用されます。",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "ユーザーがアプリを使用している間だけでなく、バックグラウンドでの通知や機能を提供するために常に位置情報が使用されます。",
-        "NSCameraUsageDescription": "QRコードをスキャンして相手のユーザー情報を取得するためにカメラが使用されます"
+        "NSCameraUsageDescription": "QRコードをスキャンして相手のユーザー情報を取得するためにカメラが使用されます",
+        "NSPhotoLibraryUsageDescription": "カメラロールから写真を選択して、友達があなたを簡単に識別できるようにアプリで表示するためにアクセスが必要です。"
       },
       "bundleIdentifier": "com.wadamitsuki.mapapp",
-      "buildNumber": "8"
+      "buildNumber": "11"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +31,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.wadamitsuki.mapapp",
-      "versionCode": 2 
+      "versionCode": 3 
     },
     "web": {
       "favicon": "./assets/favicon.png"

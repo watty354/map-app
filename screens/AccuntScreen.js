@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, Text, Image, SafeAreaView, TouchableOpacity, StyleSheet, ScrollView, Alert, FlatList } from 'react-native';
-import { db, getLoginUsersData, getSearchName, auth, imageStore, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId, test } from '../lib/firebase'
+import { db, getLoginUsersData, getSearchName, auth, imageStore, getUseresData, getMatchingIds, getFolloweredUsersData, getFollowedId } from '../lib/firebase'
 import { pickImage } from '../lib/image-picker'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import QRCode from 'react-native-qrcode-svg';
@@ -23,7 +23,7 @@ export const AccuntScreen = ({ navigation }) => {
     const clipName = useSelector((state) => state.user.displayName);
     const clipImage = useSelector((state) => state.user.displayImage);
 
-    const notUser = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/temp%2FNoneImage.png?alt=media&token=e369d1bf-9a05-4263-8a0f-aa1a1192e0d6";
+    const notUser = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/temp%2FNoneImage.png?alt=media&token=a4b0d4ae-e139-48ea-a691-0b34042a7630";
 
     //ログインしてるユーザを取得
     useEffect(() => {

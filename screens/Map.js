@@ -20,6 +20,7 @@ export const MapScreen = ({ route, navigation }) => {
   const [loginUserImage, setLoginUserImage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [locationCheck, setLocationCheck] = useState(false);
 
   const dispatch = useDispatch();
   const clipName = useSelector((state) => state.user.displayName);
@@ -96,11 +97,13 @@ export const MapScreen = ({ route, navigation }) => {
   const [markerVisible, setMarkerVisible] = useState(false);
   //現在地の表示
   const userLocationNow = async () => {
-    // let location = userLocation();
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      setErrorMsg('位置共有の許可してください');
+      // setErrorMsg('位置共有の許可してください');
+      Alert.alert('位置情報の許可が必要です', '位置情報の許可をしてください');
+      return Promise.resolve(false);
     }
+    setLocationCheck(true);
     let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
     setMapRegion({
       latitude: location.coords.latitude,
@@ -108,6 +111,7 @@ export const MapScreen = ({ route, navigation }) => {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     })
+    return Promise.resolve(true);
   }
   useEffect(() => {
     userLocationNow();
@@ -139,10 +143,14 @@ export const MapScreen = ({ route, navigation }) => {
   }
 
   //位置共有開始
-  locationNowStart = () => {
+  locationNowStart = async () => {
     if (!markerVisible) {
-      setMarkerVisible(true);
-      mapDisplay(mapRegion.latitude, mapRegion.longitude);
+      const status = await userLocationNow();
+      console.log(status);
+      if (status) {
+        setMarkerVisible(true);
+        mapDisplay(mapRegion.latitude, mapRegion.longitude);
+      }
     }
   }
 
@@ -167,6 +175,7 @@ export const MapScreen = ({ route, navigation }) => {
 
   const handleReflesh = async () => {
     setIsLoading(true);
+    userLocationNow();
     const data = await getMapFollowUsersData();
     setUsersData(data);
     setTimeout(() => {

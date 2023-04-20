@@ -22,7 +22,7 @@ export const ButtunPrompt = (props) => {
   if (props.action === "５秒でわかる使い方" || props.action === "フォロー解除" || props.action === "ブロック"){
     isDispach= true;
   }
-  if (props.action === "アカウント削除" || props.action === "アカウントを削除する"){
+  if (props.action === "戻る" || props.action === "アカウントを削除する"){
     idDelete = true;
   }
 

@@ -22,7 +22,7 @@ export const RegisterScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
 
-  const notUser = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/temp%2FNoneImage.png?alt=media&token=e369d1bf-9a05-4263-8a0f-aa1a1192e0d6";
+  const notUser = "https://firebasestorage.googleapis.com/v0/b/shop-57d77.appspot.com/o/temp%2FNoneImage.png?alt=media&token=a4b0d4ae-e139-48ea-a691-0b34042a7630";
 
   //登録
   const handleRegister = async () => {
