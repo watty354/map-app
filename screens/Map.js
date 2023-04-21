@@ -144,14 +144,15 @@ export const MapScreen = ({ route, navigation }) => {
 
   //位置共有開始
   locationNowStart = async () => {
+    setIsLoading(true);
     if (!markerVisible) {
       const status = await userLocationNow();
-      console.log(status);
       if (status) {
         setMarkerVisible(true);
         mapDisplay(mapRegion.latitude, mapRegion.longitude);
       }
     }
+    setIsLoading(false);
   }
 
   //位置共有停止

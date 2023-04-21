@@ -56,18 +56,25 @@ export const RegisterScreen = ({ navigation }) => {
       .then((userCredential) => {
         // Signed in
         const uid = userCredential.user.uid;
-        data = {
+        userData = {
           user_id: uid,
           country: "",
-          email: email,
-          password: password,
           displayName: name,
           imageUrl: notUser,
           displayMap: false,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
         }
-        setDoc(doc(db, "users", uid), data);
+        privateData = {
+          user_id: uid,
+          email: email,
+          password: password,
+          displayName: name,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        }
+        setDoc(doc(db, "users", uid), userData);
+        setDoc(doc(db, "private", uid), privateData);
 
         //reduxに保存
         
