@@ -189,7 +189,7 @@ export const MapScreen = ({ route, navigation }) => {
       {isAuthenticated ? (
         <><><MapView style={styles.map}
           region={mapRegion}
-          provider={PROVIDER_GOOGLE}
+          //provider={PROVIDER_GOOGLE}
         >
           {markerVisible && (
             <Marker

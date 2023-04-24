@@ -10,16 +10,22 @@ const functions = require("firebase-functions");
 
 // const admin = require("firebase-admin");
 // admin.initializeApp();
+// eslint-disable-next-line require-jsdoc
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 exports.onDisplayMapChanged = functions.firestore
     .document("users/{userId}")
-    .onUpdate((change, context) => {
-    //   const userId = context.auth.uid;
-      const displayMap = change.after.data().displayMap;
-      if (displayMap) {
-        setTimeout(() => {
+    .onUpdate(async (change, context) => {
+      try {
+        const displayMap = change.after.data().displayMap;
+        if (displayMap) {
+          await sleep(7200000);
           change.after.ref.update({displayMap: false});
-        }, 7200000);
+        }
+      } catch (error) {
+        console.error("Error in function: ", error);
       }
       return null;
     });
