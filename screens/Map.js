@@ -21,6 +21,7 @@ export const MapScreen = ({ route, navigation }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [locationCheck, setLocationCheck] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const dispatch = useDispatch();
   const clipName = useSelector((state) => state.user.displayName);
@@ -84,7 +85,6 @@ export const MapScreen = ({ route, navigation }) => {
     fetchData();
   }, []);
 
-
   //マップ初期表示
   const [mapRegion, setMapRegion] = useState({
     // 初期表示
@@ -94,12 +94,27 @@ export const MapScreen = ({ route, navigation }) => {
     longitudeDelta: 0.0421,
   });
 
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    userLocationNow();
+    setIsLoading(false);
+  }, []);
+
   const [markerVisible, setMarkerVisible] = useState(false);
   //現在地の表示
   const userLocationNow = async () => {
+    setIsFetchingLocation(true);
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       // setErrorMsg('位置共有の許可してください');
+      setIsFetchingLocation(false);
       Alert.alert('位置情報の許可が必要です', '位置情報の許可をしてください');
       return Promise.resolve(false);
     }
@@ -111,11 +126,9 @@ export const MapScreen = ({ route, navigation }) => {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     })
+    setIsFetchingLocation(false);
     return Promise.resolve(true);
   }
-  useEffect(() => {
-    userLocationNow();
-  }, []);
 
   //共有ボタン押下アクション
   const handlePress = () => {
@@ -186,6 +199,15 @@ export const MapScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {
+        isFetchingLocation && (
+          <Modal transparent={true} statusBarTranslucent={true}>
+            <View style={styles.overlay}>
+              <ActivityIndicator size="large" color="#000" />
+              <Text style={{ color: '#FFF'}}>現在地を取得しています</Text>
+            </View>
+          </Modal>
+        )}
       {isAuthenticated ? (
         <><><MapView style={styles.map}
           region={mapRegion}
