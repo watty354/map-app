@@ -194,6 +194,7 @@ export const ChatScreen = ({ route, navigation }) => {
         renderBubble={renderBubble}
         // renderAvatar={false} 
         showAvatarForEveryMessage={true}
+        bottomOffset={Platform.OS === 'ios' ? 64 : 0}
       />
       <Modal
         animationType="slide"
