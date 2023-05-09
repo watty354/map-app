@@ -2,7 +2,7 @@
   "expo": {
     "name": "nominau",
     "slug": "map-app",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -10,6 +10,10 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
+    },
+    "notification": {
+      "icon": "./assets/noticeIcon.png",
+      "color": "#FFF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,13 +24,14 @@
         "NSLocationWhenInUseUsageDescription": "ユーザーの現時点での位置情報を利用して、相互フォローの友達に位置を表示するために位置情報が使用されます。",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "ユーザーがアプリを使用している間だけでなく、バックグラウンドでの通知や機能を提供するために常に位置情報が使用されます。",
         "NSCameraUsageDescription": "QRコードをスキャンして相手のユーザー情報を取得するためにカメラが使用されます",
-        "NSPhotoLibraryUsageDescription": "カメラロールから写真を選択して、友達があなたを簡単に識別できるようにアプリで表示するためにアクセスが必要です。"
+        "NSPhotoLibraryUsageDescription": "カメラロールから写真を選択して、友達があなたを簡単に識別できるようにアプリで表示するためにアクセスが必要です。",
+        "NSUserNotificationUsageDescription": "このアプリでは、新しいメッセージが届いた時に通知を送信します。"
       },
       "config": {
         "googleMapsApiKey": "AIzaSyDcQGK9I4ZfdvUaiT8P92TEkZYq0t0t3CU"
       },
       "bundleIdentifier": "com.wadamitsuki.mapapp",
-      "buildNumber": "13"
+      "buildNumber": "14"
     },
     "android": {
       "adaptiveIcon": {
@@ -39,7 +44,7 @@
         }
       },
       "package": "com.wadamitsuki.mapapp",
-      "versionCode": 5 
+      "versionCode": 6 
     },
     "web": {
       "favicon": "./assets/favicon.png"

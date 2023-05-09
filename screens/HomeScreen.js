@@ -3,11 +3,12 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Alert, TextInput, TouchableOpacity } from 'react-native';
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { db, auth } from '../lib/firebase'
+import { db, auth, savePush } from '../lib/firebase'
 import { useDispatch, useSelector } from 'react-redux';
-import { storePass, storeEmail } from '../store/userSlice';
+import { storePass, storeEmail, storePushToken } from '../store/userSlice';
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { registerForPushNotificationsAsync } from '../lib/notification'
 
 export const HomeScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ export const HomeScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const clipEmail = useSelector((state) => state.user.email);
     const clipPass = useSelector((state) => state.user.password);
+    const clipPushToken = useSelector((state) => state.user.pushToken);
 
     useEffect(() => {
         if (clipEmail && clipPass) {
@@ -31,10 +33,19 @@ export const HomeScreen = ({ navigation }) => {
         dispatch(storeEmail(email));
         dispatch(storePass(password));
         signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
+            .then(async (userCredential) => {
                 // Signed in
                 console.log('User signed in!');
-                // navigation.navigate('AccuntTab');
+                const pushToken = await registerForPushNotificationsAsync();
+                if (clipPushToken) {
+                    if (pushToken != clipPushToken) {
+                        await savePush(pushToken);
+                        dispatch(storePushToken(pushToken));
+                    }
+                } else {
+                    await savePush(pushToken);
+                    dispatch(storePushToken(pushToken));
+                }
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -51,10 +62,9 @@ export const HomeScreen = ({ navigation }) => {
                 }
             });
     }
-    // console.log(clipEmail);
+
     return (
         <View style={styles.container}>
-            {/* <Ionicons name="beer" size={80} style={styles.icon} /> */}
             <Image source={require('../image/homeLogo.png')} style={styles.logo} />
             <TextInput
                 style={styles.input}

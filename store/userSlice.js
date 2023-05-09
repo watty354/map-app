@@ -4,12 +4,15 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState  = {
     clips: [],
     userId: '',
-    emial: '',
+    email: '',
     password: '',
     displayName: '',
     displayImage: '',
     blockUsers: [],
     matchId: [],
+    displayMap: false,
+    country: '',
+    pushToken: '',
   }
 
 // 処理（Action）
@@ -52,13 +55,23 @@ export const userSlice = createSlice({
         }
         state.matchId.push(matchId);
     },
-
-
+    storeDisplayMap: (state, action) => {
+      const displayMap = action.payload;
+      state.displayMap = displayMap;
+    },
+    storeCountry: (state, action) => {
+      const country = action.payload;
+      state.country = country;
+    },
+    storePushToken: (state, action) => {
+      const pushToken = action.payload;
+      state.pushToken = pushToken;
+    },
   },
 })
 
 // 処理（Action）を定義
-export const { storeUserId, storeName, storeImage, storeEmail, storePass, storeBlockUsers, storeMatchId} = userSlice.actions
+export const { storeUserId, storeName, storeImage, storeEmail, storePass, storeBlockUsers, storeMatchId, storeDisplayMap, storeCountry, storePushToken} = userSlice.actions
 
 // 名前のやつでね〜
 export default userSlice.reducer

@@ -17,11 +17,15 @@
     "@reduxjs/toolkit": "^1.9.3",
     "expo": "~48.0.6",
     "expo-barcode-scanner": "~12.3.2",
+    "expo-device": "~5.2.1",
     "expo-image-picker": "~14.1.1",
     "expo-location": "~15.1.1",
+    "expo-notifications": "~0.18.1",
+    "expo-server-sdk": "^3.7.0",
     "expo-status-bar": "~1.4.4",
     "expo-tracking-transparency": "~3.0.3",
     "firebase": "9.17.1",
+    "firebase-admin": "^11.8.0",
     "react": "18.2.0",
     "react-firebase-hooks": "^5.1.1",
     "react-native": "0.71.6",
@@ -34,7 +38,8 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "13.4.0",
     "react-redux": "^8.0.5",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

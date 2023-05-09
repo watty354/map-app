@@ -4,7 +4,6 @@ import firebase from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, collection, addDoc, Timestamp } from "firebase/firestore";
 import { db, getSearchName } from '../lib/firebase'
-import { UserContext } from '../contexts/userContexts'
 import { ButtunPrompt } from '../components/ButtunPrompt'
 import { CheckBox } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';

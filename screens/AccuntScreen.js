@@ -9,7 +9,6 @@ import { storeUserId, storeImage, storeName } from '../store/userSlice';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SettingListItem } from "../components/SettingListItem";
 
-
 export const AccuntScreen = ({ navigation }) => {
     const [loginUsersData, setLoginUsersData] = useState([]);
     const [loginUserName, setLoginUserName] = useState("");
@@ -58,6 +57,7 @@ export const AccuntScreen = ({ navigation }) => {
 
     // 友達（相互フォロー）リストへ遷移
     const handleFriendList = async () => {
+        await scheduleNotificationAsync();
         const matchingIds = await getMatchingIds();
         const users = await getUseresData(matchingIds);
         const action = "match";

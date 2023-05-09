@@ -10,8 +10,8 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { async } from '@firebase/util';
 import { useDispatch, useSelector } from 'react-redux';
-import { storeUserId, storeImage, storeName } from '../store/userSlice';
-// import BackgroundTask from 'react-native-background-task';
+import { storeUserId, storeImage, storeName, storeDisplayMap, storeCountry } from '../store/userSlice';
+import { PrefecturePicker, getPrefectureLatLng } from '../components/PrefecturePicker'
 
 export const MapScreen = ({ route, navigation }) => {
   const [usersData, setUsersData] = useState([]);
@@ -22,10 +22,14 @@ export const MapScreen = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [locationCheck, setLocationCheck] = useState(false);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPrefecture, setSelectedPrefecture] = useState(null);
 
   const dispatch = useDispatch();
   const clipName = useSelector((state) => state.user.displayName);
   const clipImage = useSelector((state) => state.user.displayImage);
+  const clipMap = useSelector((state) => state.user.displayMap);
+  const clipCountry = useSelector((state) => state.user.country);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -41,6 +45,34 @@ export const MapScreen = ({ route, navigation }) => {
       setUsersData(data);
     };
     fetchUsersData();
+  }, []);
+
+  // マップの表示
+  useEffect(() => {
+    const displayMapStatus = async () => {
+      if (clipMap) {
+        setMarkerVisible(clipMap);
+      }
+    };
+    displayMapStatus();
+  }, []);
+
+  // 初期表示設定モーダル表示
+  useEffect(() => {
+    const getPrefecture = async () => {
+      if (clipCountry) {
+        const location = getPrefectureLatLng(clipCountry);
+        setMapRegion({
+          latitude: location.lat,
+          longitude: location.lng,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        })
+      } else {
+        handleOptionsPress();
+      }
+    };
+    getPrefecture();
   }, []);
 
   //ログインしてるユーザを取得
@@ -94,19 +126,6 @@ export const MapScreen = ({ route, navigation }) => {
     longitudeDelta: 0.0421,
   });
 
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
-  useEffect(() => {
-    setIsLoading(true);
-    userLocationNow();
-    setIsLoading(false);
-  }, []);
-
   const [markerVisible, setMarkerVisible] = useState(false);
   //現在地の表示
   const userLocationNow = async () => {
@@ -150,14 +169,13 @@ export const MapScreen = ({ route, navigation }) => {
         },
         { text: 'OK', onPress: locationNowStart },
       ]);
-
     }
-
   }
 
   //位置共有開始
   locationNowStart = async () => {
     setIsLoading(true);
+    dispatch(storeDisplayMap(true));
     if (!markerVisible) {
       const status = await userLocationNow();
       if (status) {
@@ -172,6 +190,7 @@ export const MapScreen = ({ route, navigation }) => {
   locationNowStop = () => {
     setMarkerVisible(false);
     mapDisplayNone();
+    dispatch(storeDisplayMap(false));
   }
 
   // // アプリの状態を監視
@@ -197,6 +216,22 @@ export const MapScreen = ({ route, navigation }) => {
     }, 1000);
   }
 
+  // 初期表示設定 
+  const handleOptionsPress = () => {
+    setModalVisible(!modalVisible);
+  };
+  const handleSelectedPrefecture = () => {
+    dispatch(storeCountry(selectedPrefecture));
+    const location = getPrefectureLatLng(selectedPrefecture);
+    setMapRegion({
+      latitude: location.lat,
+      longitude: location.lng,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    })
+    setModalVisible(!modalVisible);
+  }
+
   return (
     <View style={styles.container}>
       {
@@ -204,14 +239,14 @@ export const MapScreen = ({ route, navigation }) => {
           <Modal transparent={true} statusBarTranslucent={true}>
             <View style={styles.overlay}>
               <ActivityIndicator size="large" color="#000" />
-              <Text style={{ color: '#FFF'}}>現在地を取得しています</Text>
+              <Text style={{ color: '#FFF' }}>現在地を取得しています</Text>
             </View>
           </Modal>
         )}
       {isAuthenticated ? (
         <><><MapView style={styles.map}
           region={mapRegion}
-          //provider={PROVIDER_GOOGLE}
+        //provider={PROVIDER_GOOGLE}
         >
           {markerVisible && (
             <Marker
@@ -274,6 +309,31 @@ export const MapScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
 
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={handleOptionsPress}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={[styles.modalText, { color: 'black' }]}>都道府県を選択してください</Text>
+                  <PrefecturePicker
+                    selectedPrefecture={selectedPrefecture}
+                    onValueChange={(itemValue) => setSelectedPrefecture(itemValue)}
+                  />
+                  <TouchableOpacity style={styles.modalButton} onPress={handleSelectedPrefecture}>
+                    <Text style={[styles.modalText]}>決定</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.modalButton} onPress={handleOptionsPress}>
+                    <Text style={[styles.modalText, { color: 'black' }]}>今は決めない！</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          </View>
+
           {isLoading && (
             <Modal transparent={true} statusBarTranslucent={true}>
               <View style={styles.overlay}>
@@ -282,6 +342,7 @@ export const MapScreen = ({ route, navigation }) => {
             </Modal>
           )}
         </>
+
 
       ) : (
         <View>
@@ -377,5 +438,35 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    // margin: 20,
+    marginBottom: 50,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 15,
+    textAlign: 'center',
+    color: 'red'
+  },
+  modalButton: {
+    marginTop: 10,
   },
 });
