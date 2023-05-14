@@ -2,7 +2,7 @@
   "expo": {
     "name": "nominau",
     "slug": "map-app",
-    "version": "2.1.0",
+    "version": "2.3.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,7 +31,7 @@
         "googleMapsApiKey": "AIzaSyDcQGK9I4ZfdvUaiT8P92TEkZYq0t0t3CU"
       },
       "bundleIdentifier": "com.wadamitsuki.mapapp",
-      "buildNumber": "14"
+      "buildNumber": "18"
     },
     "android": {
       "adaptiveIcon": {
@@ -44,7 +44,7 @@
         }
       },
       "package": "com.wadamitsuki.mapapp",
-      "versionCode": 6 
+      "versionCode": 7 
     },
     "web": {
       "favicon": "./assets/favicon.png"

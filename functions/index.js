@@ -42,21 +42,37 @@ exports.sendNotificationOnMessageReceived = functions.region("asia-northeast2").
     });
 
 // eslint-disable-next-line require-jsdoc
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function sleep(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
-exports.onDisplayMapChanged = functions.region("asia-northeast2").firestore
-    .document("users/{userId}")
-    .onUpdate(async (change, context) => {
-      try {
-        const displayMap = change.after.data().displayMap;
-        if (displayMap) {
-          await sleep(7200000);
-          change.after.ref.update({displayMap: false});
-        }
-      } catch (error) {
-        console.error("Error in function: ", error);
-      }
+// exports.onDisplayMapChanged = functions.region("asia-northeast2").firestore
+//     .document("users/{userId}")
+//     .onUpdate(async (change, context) => {
+//       try {
+//         const displayMap = change.after.data().displayMap;
+//         if (displayMap) {
+//           await sleep(7200000);
+//           change.after.ref.update({displayMap: false});
+//         }
+//       } catch (error) {
+//         console.error("Error in function: ", error);
+//       }
+//       return null;
+//     });
+
+// eslint-disable-next-line max-len
+exports.scheduledFunction = functions.region("asia-northeast2").pubsub.schedule("0 6 * * *")
+    .timeZone("Asia/Tokyo").onRun(async (context) => {
+      const usersRef = admin.firestore().collection("users");
+      const snapshot = await usersRef.where("displayMap", "==", true).get();
+
+      const updates = snapshot.docs.map((doc) => {
+        return doc.ref.update({displayMap: false});
+      });
+
+      await Promise.all(updates);
+
+      console.log("Updated displayMap to false for all users.");
       return null;
     });

@@ -126,13 +126,13 @@ export const MapScreen = ({ route, navigation }) => {
     longitudeDelta: 0.0421,
   });
 
+  const [nowMapRegion, setNowMapRegion] = useState({});
   const [markerVisible, setMarkerVisible] = useState(false);
-  //現在地の表示
-  const userLocationNow = async () => {
+  //現在地の表示 - (位置表示)
+  const userLocationNow = async (action) => {
     setIsFetchingLocation(true);
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      // setErrorMsg('位置共有の許可してください');
       setIsFetchingLocation(false);
       Alert.alert('位置情報の許可が必要です', '位置情報の許可をしてください');
       return Promise.resolve(false);
@@ -145,6 +145,14 @@ export const MapScreen = ({ route, navigation }) => {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     })
+    if (action == "start") {
+      setNowMapRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      })
+    }
     setIsFetchingLocation(false);
     return Promise.resolve(true);
   }
@@ -177,14 +185,21 @@ export const MapScreen = ({ route, navigation }) => {
     setIsLoading(true);
     dispatch(storeDisplayMap(true));
     if (!markerVisible) {
-      const status = await userLocationNow();
+      const action = "start"; 
+      const status = userLocationNow(action);
       if (status) {
         setMarkerVisible(true);
-        mapDisplay(mapRegion.latitude, mapRegion.longitude);
       }
     }
     setIsLoading(false);
   }
+
+  useEffect(() => {
+    if (nowMapRegion.latitude && nowMapRegion.longitude) {
+        mapDisplay(nowMapRegion.latitude, nowMapRegion.longitude);
+    }
+  }, [nowMapRegion]); 
+
 
   //位置共有停止
   locationNowStop = () => {
@@ -208,12 +223,11 @@ export const MapScreen = ({ route, navigation }) => {
 
   const handleReflesh = async () => {
     setIsLoading(true);
-    userLocationNow();
+    const action = "reflesh"; 
+    userLocationNow(action);
     const data = await getMapFollowUsersData();
     setUsersData(data);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    setIsLoading(false);
   }
 
   // 初期表示設定 

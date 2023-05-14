@@ -57,7 +57,6 @@ export const AccuntScreen = ({ navigation }) => {
 
     // 友達（相互フォロー）リストへ遷移
     const handleFriendList = async () => {
-        await scheduleNotificationAsync();
         const matchingIds = await getMatchingIds();
         const users = await getUseresData(matchingIds);
         const action = "match";

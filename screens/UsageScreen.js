@@ -13,7 +13,7 @@ export const UsageScreen = ({ route, navigation }) => {
         <Text style={styles.subText}>※追跡ではありません。ボタンを押したその時点の場所が表示されます</Text>
         {/* <Text style={styles.listTitle}>位置が共有されます！</Text> */}
         <Text style={styles.listTitle}>2. 停止ボタンを押すと位置共有が停止されます！</Text>
-        <Text style={styles.subText}>（２時間経つと自動で停止されます）</Text>
+        <Text style={styles.subText}>（押し忘れても午前６時に自動で停止されます）</Text>
         <View style={styles.row}>
           <Image source={require('../image/Sample.png')} style={styles.image} />
           <Image source={require('../image/Sample2.png')} style={styles.image} />
