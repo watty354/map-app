@@ -19,6 +19,7 @@ export const UserScreen = ({ route }) => {
     useEffect(() => {
         const isFollowedConfirmation = async () => {
             const followedarray = await getFolloweredUsersData();
+            console.log(followedarray)
             if (followedarray.some(innerArray => innerArray.includes(user.user_id))) {
                 setIsFollowed(true);
             }
@@ -52,11 +53,11 @@ export const UserScreen = ({ route }) => {
         if (action == "followed") {
             await addMatch(uid, user.user_id);
         } else {
+            // フォローされてる人のIDを取得
             const followedUser = await getFollowedAllId();
-            if (followedUser.includes(uid)) {
+            if (followedUser.includes(user.user_id)) {
                 // uidがfollowedUserの配列に含まれている場合
                 await addMatch(uid, user.user_id);
-
               } else {
                 // uidがfollowedUserの配列に含まれていない場合
                 await addFollow(uid, user.user_id);

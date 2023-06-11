@@ -18,7 +18,6 @@ export const MapScreen = ({ route, navigation }) => {
   const [loginUsersData, setLoginUsersData] = useState([]);
   const [loginUserName, setLoginUserName] = useState("");
   const [loginUserImage, setLoginUserImage] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [locationCheck, setLocationCheck] = useState(false);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
@@ -30,13 +29,6 @@ export const MapScreen = ({ route, navigation }) => {
   const clipImage = useSelector((state) => state.user.displayImage);
   const clipMap = useSelector((state) => state.user.displayMap);
   const clipCountry = useSelector((state) => state.user.country);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user);
-    });
-    return () => unsubscribe();
-  }, []);
 
   //共有してるユーザを取得
   useEffect(() => {
@@ -185,7 +177,7 @@ export const MapScreen = ({ route, navigation }) => {
     setIsLoading(true);
     dispatch(storeDisplayMap(true));
     if (!markerVisible) {
-      const action = "start"; 
+      const action = "start";
       const status = userLocationNow(action);
       if (status) {
         setMarkerVisible(true);
@@ -196,9 +188,9 @@ export const MapScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     if (nowMapRegion.latitude && nowMapRegion.longitude) {
-        mapDisplay(nowMapRegion.latitude, nowMapRegion.longitude);
+      mapDisplay(nowMapRegion.latitude, nowMapRegion.longitude);
     }
-  }, [nowMapRegion]); 
+  }, [nowMapRegion]);
 
 
   //位置共有停止
@@ -223,7 +215,7 @@ export const MapScreen = ({ route, navigation }) => {
 
   const handleReflesh = async () => {
     setIsLoading(true);
-    const action = "reflesh"; 
+    const action = "reflesh";
     userLocationNow(action);
     const data = await getMapFollowUsersData();
     setUsersData(data);
@@ -248,7 +240,9 @@ export const MapScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+
       {
+      //現在地取得画面
         isFetchingLocation && (
           <Modal transparent={true} statusBarTranslucent={true}>
             <View style={styles.overlay}>
@@ -257,115 +251,105 @@ export const MapScreen = ({ route, navigation }) => {
             </View>
           </Modal>
         )}
-      {isAuthenticated ? (
-        <><><MapView style={styles.map}
-          region={mapRegion}
-        //provider={PROVIDER_GOOGLE}
-        >
-          {markerVisible && (
+      <><><MapView style={styles.map}
+        region={mapRegion}
+      //provider={PROVIDER_GOOGLE}
+      >
+        {markerVisible && (
+          <Marker
+            coordinate={{
+              latitude: mapRegion.latitude,
+              longitude: mapRegion.longitude,
+            }}
+          >
+            {loginUserImage && loginUserName ? (
+              <View style={styles.customMarker}>
+                <Text style={styles.markerTitle}>{loginUserName}</Text>
+                <Image source={{ uri: loginUserImage }} style={styles.markerImage} />
+              </View>
+            ) : (
+              <View style={styles.customMarker}>
+                <Text style={styles.markerTitle}>{loginUserName}</Text>
+                <Image
+                  source={require('../image/NoneImage.png')}
+                  style={styles.markerImage} />
+              </View>
+            )}
+          </Marker>
+        )}
+        {usersData.map((user) => (
+          user.displayMap && (
             <Marker
+              key={user.id}
               coordinate={{
-                latitude: mapRegion.latitude,
-                longitude: mapRegion.longitude,
+                latitude: user.latitude,
+                longitude: user.longitude,
               }}
+              onPress={() => navigation.navigate('ChatTab', { screen: 'Chat', params: { user: user } })}
             >
-              {loginUserImage && loginUserName ? (
-                <View style={styles.customMarker}>
-                  <Text style={styles.markerTitle}>{loginUserName}</Text>
-                  <Image source={{ uri: loginUserImage }} style={styles.markerImage} />
-                </View>
-              ) : (
-                <View style={styles.customMarker}>
-                  <Text style={styles.markerTitle}>{loginUserName}</Text>
-                  <Image
-                    source={require('../image/NoneImage.png')}
-                    style={styles.markerImage} />
-                </View>
-              )}
+              <View style={styles.customMarker}>
+                <Text style={styles.markerTitle}>{user.displayName}</Text>
+                {user?.imageUrl ? (
+                  <Image source={{ uri: user.imageUrl }} style={styles.markerImage} />
+                ) : (
+                  <Image source={require('../image/NoneImage.png')} style={styles.markerImage} />
+                )}
+              </View>
             </Marker>
-          )}
-          {usersData.map((user) => (
-            user.displayMap && (
-              <Marker
-                key={user.id}
-                coordinate={{
-                  latitude: user.latitude,
-                  longitude: user.longitude,
-                }}
-                onPress={() => navigation.navigate('ChatTab', { screen: 'Chat', params: { user: user } })}
-              >
-                <View style={styles.customMarker}>
-                  <Text style={styles.markerTitle}>{user.displayName}</Text>
-                  {user?.imageUrl ? (
-                    <Image source={{ uri: user.imageUrl }} style={styles.markerImage} />
-                  ) : (
-                    <Image source={require('../image/NoneImage.png')} style={styles.markerImage} />
-                  )}
-                </View>
-              </Marker>
-            )
-          ))}
-        </MapView>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
-              <View style={[styles.button, { backgroundColor: markerVisible ? '#BDBDBD' : '#EB6383' }]}>
-                <Text style={styles.buttonText}>{markerVisible ? '停止' : 'ここおるで〜'}</Text>
-                <Ionicons name={[markerVisible ? "stop-circle-outline" : "beer-outline"]} size={70} style={styles.icon} />
-              </View>
-            </TouchableOpacity>
-          </View></>
+          )
+        ))}
+      </MapView>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonContainer} onPress={handlePress}>
+            <View style={[styles.button, { backgroundColor: markerVisible ? '#BDBDBD' : '#EB6383' }]}>
+              <Text style={styles.buttonText}>{markerVisible ? '停止' : 'ここおるで〜'}</Text>
+              <Ionicons name={[markerVisible ? "stop-circle-outline" : "beer-outline"]} size={70} style={styles.icon} />
+            </View>
+          </TouchableOpacity>
+        </View></>
 
-          <View style={styles.topLeftButtonContainer}>
-            <TouchableOpacity onPress={handleReflesh}>
-              <View style={styles.topLeftButton}>
-                <Ionicons name="refresh-outline" style={styles.topLeftButtonlogo} />
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={handleOptionsPress}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={[styles.modalText, { color: 'black' }]}>都道府県を選択してください</Text>
-                  <PrefecturePicker
-                    selectedPrefecture={selectedPrefecture}
-                    onValueChange={(itemValue) => setSelectedPrefecture(itemValue)}
-                  />
-                  <TouchableOpacity style={styles.modalButton} onPress={handleSelectedPrefecture}>
-                    <Text style={[styles.modalText]}>決定</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.modalButton} onPress={handleOptionsPress}>
-                    <Text style={[styles.modalText, { color: 'black' }]}>今は決めない！</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-          </View>
-
-          {isLoading && (
-            <Modal transparent={true} statusBarTranslucent={true}>
-              <View style={styles.overlay}>
-                <ActivityIndicator size="large" color="#000" />
-              </View>
-            </Modal>
-          )}
-        </>
-
-
-      ) : (
-        <View>
-          <ButtunPrompt
-            action="ログイン"
-            onPress={() => navigation.navigate('Login')}
-          />
+        <View style={styles.topLeftButtonContainer}>
+          <TouchableOpacity onPress={handleReflesh}>
+            <View style={styles.topLeftButton}>
+              <Ionicons name="refresh-outline" style={styles.topLeftButtonlogo} />
+            </View>
+          </TouchableOpacity>
         </View>
-      )}
+
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={handleOptionsPress}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={[styles.modalText, { color: 'black' }]}>都道府県を選択してください</Text>
+                <PrefecturePicker
+                  selectedPrefecture={selectedPrefecture}
+                  onValueChange={(itemValue) => setSelectedPrefecture(itemValue)}
+                />
+                <TouchableOpacity style={styles.modalButton} onPress={handleSelectedPrefecture}>
+                  <Text style={[styles.modalText]}>決定</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.modalButton} onPress={handleOptionsPress}>
+                  <Text style={[styles.modalText, { color: 'black' }]}>今は決めない！</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </View>
+
+        {isLoading && (
+          //リフレッシュ画面
+          <Modal transparent={true} statusBarTranslucent={true}>
+            <View style={styles.overlay}>
+              <ActivityIndicator size="large" color="#000" />
+            </View>
+          </Modal>
+        )}
+      </>
     </View>
   );
 }
